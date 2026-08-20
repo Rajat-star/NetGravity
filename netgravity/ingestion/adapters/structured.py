@@ -181,7 +181,11 @@ def parse_products(rows: List[Dict[str, str]],
         weight, i = rc.as_float(row, "weight_kg", file, n, default=1.0); issues += i
         volume, i = rc.as_float(row, "volume_m3", file, n, default=0.001); issues += i
         value, i = rc.as_float(row, "unit_value", file, n, default=0.0); issues += i
+        price, i = rc.as_float(row, "selling_price", file, n, default=0.0); issues += i
         holding, i = rc.as_float(row, "holding_rate", file, n, default=0.25); issues += i
+        ordering_cost, i = rc.as_float(row, "fixed_ordering_cost", file, n, default=0.0); issues += i
+        tsl, i = rc.as_float(row, "target_service_level", file, n, default=0.95); issues += i
+        pallet_units, i = rc.as_float(row, "units_per_pallet", file, n, default=100.0); issues += i
 
         result.issues.extend(issues)
         if any(x.severity == Severity.ERROR for x in issues):
@@ -193,11 +197,20 @@ def parse_products(rows: List[Dict[str, str]],
         records.append(ProductRecord(
             id=pid,
             name=(row.get("product_name") or pid).strip(),
+            sku_code=(row.get("sku_code") or "").strip() or None,
+            category=(row.get("category") or "GENERAL").strip().upper(),
             unit=(row.get("unit") or "units").strip(),
             weight_kg=weight if weight is not None else 1.0,
             volume_m3=volume if volume is not None else 0.001,
             unit_value=value or 0.0,
+            selling_price=price or 0.0,
             holding_rate=holding if holding is not None else 0.25,
+            fixed_ordering_cost=ordering_cost or 0.0,
+            storage_type=(row.get("storage_type") or "AMBIENT").strip().upper(),
+            is_hazmat=_truthy(row.get("is_hazmat")),
+            shelf_life_days=int(row["shelf_life_days"]) if row.get("shelf_life_days") and row["shelf_life_days"].isdigit() else None,
+            units_per_pallet=int(pallet_units) if pallet_units else 100,
+            target_service_level=tsl if tsl is not None else 0.95,
         ))
         result.rows_accepted += 1
 

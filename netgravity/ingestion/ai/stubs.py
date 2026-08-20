@@ -150,11 +150,21 @@ _SIGNAL_STRUCTURE: Dict[str, Any] = {
 }
 
 
+_STRUCTURED_SANITIZER: Dict[str, Any] = {
+    "status": "PASSED",
+    "deduplications": [],
+    "outliers": [],
+    "imputations": [],
+    "notes": "AI Data Sanitizer run in offline stub mode.",
+}
+
+
 _REGISTRY: Dict[str, Dict[str, Any]] = {
     "distributor_mapping": _DISTRIBUTOR_MAPPING,
     "contract_transcorp": _CONTRACT_TRANSCORP,
     "contract_speedfreight": _CONTRACT_SPEEDFREIGHT,
     "signal_structure": _SIGNAL_STRUCTURE,
+    "structured_sanitizer": _STRUCTURED_SANITIZER,
 }
 
 

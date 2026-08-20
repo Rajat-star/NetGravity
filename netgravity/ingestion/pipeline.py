@@ -81,11 +81,37 @@ def run_ingestion(
         report.extras["error"] = f"source directory not found: {source}"
         return IngestionResult(report)
 
-    # --- 1. Structured path (no AI) --------------------------------------
+    # --- 1. Structured path + AI Data Sanitizer ---------------------------
     from netgravity.ingestion.adapters import structured
+    from netgravity.ingestion.ai.client import get_client
+    from netgravity.ingestion.ai.structured_sanitizer import sanitize_structured_records
 
     src = structured.ingest_directory(source)
     report.files.extend(src.results)
+
+    # Run Stage 2: AI Data Sanitizer & Anomaly Detector
+    llm_client = get_client(cfg)
+    sanitizer_res = sanitize_structured_records(
+        facilities=src.facilities,
+        products=src.products,
+        demands=src.demands,
+        lanes=src.lanes,
+        config=cfg,
+        client=llm_client,
+    )
+    src.facilities = sanitizer_res.facilities
+    src.products = sanitizer_res.products
+    src.demands = sanitizer_res.demands
+    src.lanes = sanitizer_res.lanes
+
+    if sanitizer_res.issues and report.files:
+        report.files[0].issues.extend(sanitizer_res.issues)
+
+    report.extras["AI Data Sanitizer"] = (
+        f"{sanitizer_res.imputations_count} coordinate(s) imputed, "
+        f"{sanitizer_res.outliers_count} cost outlier(s) flagged, "
+        f"{sanitizer_res.deduplications_count} duplicate(s) processed"
+    )
 
     # --- 2. Contracts (AI or stub) ---------------------------------------
     distributor_mappings: List[DistributorMapping] = []

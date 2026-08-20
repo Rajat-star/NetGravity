@@ -283,17 +283,29 @@ class FacilityRecord(BaseModel):
 
 class ProductRecord(BaseModel):
     """
-    Product / SKU specification.
+    Product / SKU specification with extended enterprise supply chain attributes.
     """
-    id:            str
-    name:          str
-    unit:          str   = "units"       # base unit of measure
-    weight_kg:     float = 1.0           # kg per base unit
-    volume_m3:     float = 0.001         # m³ per base unit
-    unit_value:    float = 0.0           # currency per unit (for inventory valuation)
-    holding_rate:  float = 0.25          # annual holding cost as fraction of unit_value
+    id:                   str
+    name:                 str
+    sku_code:             Optional[str] = None
+    category:             str   = "GENERAL"      # e.g., ELECTRONICS, PERISHABLES, PHARMA
+    unit:                 str   = "units"        # base unit of measure
+    weight_kg:            float = 1.0            # kg per base unit
+    volume_m3:            float = 0.001          # m³ per base unit
+    unit_value:           float = 0.0            # currency per unit (COGS / valuation)
+    selling_price:        float = 0.0            # selling price / MSRP per unit
+    holding_rate:         float = 0.25           # annual holding cost as fraction of unit_value
+    fixed_ordering_cost:  float = 0.0            # fixed PO / replenishment order setup cost
+    
+    # Enterprise & Storage Additions
+    storage_type:         str   = "AMBIENT"      # AMBIENT, CHILLED, FROZEN
+    is_hazmat:            bool  = False          # Hazardous material flag (air transport restriction)
+    shelf_life_days:      Optional[int] = None   # Perishability limit (days)
+    units_per_pallet:     int   = 100            # Palletization factor for FTL/LTL math
+    target_service_level: float = 0.95           # Target Cycle Service Level (CSL) SLA
 
-    @field_validator("weight_kg", "volume_m3", "unit_value", "holding_rate")
+    @field_validator("weight_kg", "volume_m3", "unit_value", "holding_rate",
+                     "selling_price", "fixed_ordering_cost", "target_service_level")
     @classmethod
     def non_negative(cls, v: float) -> float:
         if v < 0:

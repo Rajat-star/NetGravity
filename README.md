@@ -1,241 +1,274 @@
-# NetGravity — AI Decision Intelligence & Logistics Network Optimization
+# NetGravity — AI Decision Intelligence for Supply Chain & Logistics Networks
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![MILP Core](https://img.shields.io/badge/Solver-PuLP%20%7C%20HiGHS%20%7C%20CBC-purple.svg)](https://github.com/coin-or/pulp)
-[![Automated Tests](https://img.shields.io/badge/Automated%20Tests-304%20Passing-brightgreen.svg)](netgravity/forecasting/tests/)
-[![Architecture](https://img.shields.io/badge/Architecture-Hybrid%20AI%20%2B%20Exact%20MILP-orange.svg)](#system-architecture)
+[![Tests](https://img.shields.io/badge/Automated%20Tests-304%20Passing-brightgreen.svg)](netgravity/tests/)
+[![Architecture](https://img.shields.io/badge/Architecture-Deterministic%20MILP%20%2B%20Governed%20Orchestrator-orange.svg)](#3-system-architecture)
 
-> **NetGravity** is an enterprise-grade decision-intelligence and network optimization platform designed for modern, multi-echelon supply chains. It seamlessly bridges raw unstructured ERP/contract data ingestion, multi-model AI forecasting, and mathematically exact Mixed-Integer Linear Programming (MILP) optimization.
+> **NetGravity** is an enterprise-grade decision-intelligence and network optimization platform for logistics networks. It joins mathematically rigorous Mixed-Integer Linear Programming (MILP) with automated ingestion, multi-model AI forecasting, and a governed AI control plane — keeping a hard boundary between mathematical truth and generative reasoning.
 
 ---
 
-## 1. Master System Architecture
+## 1. The Core Paradigm
 
-NetGravity implements an end-to-end decision pipeline where AI augments data ingestion and time-series forecasting, while a deterministic mathematical solver remains the single source of truth for physical network optimization.
+Supply chain tools usually force a choice: solvers that are rigorous but opaque, or AI dashboards that are fluent but unverifiable. NetGravity eliminates the trade-off by making the boundary explicit and enforcing it in code.
 
-```mermaid
-flowchart TD
-    subgraph DATA["1. DATA SOURCES"]
-        D1["Excel / CSV (ERP & Distributors)"]
-        D2["SLA & Carrier Contracts (PDF / Markdown)"]
-        D3["External Signals (Google Search / News / Weather)"]
-    end
+**One rule governs the whole system:**
 
-    subgraph EXTRACTION["2. EXTRACTION / PARSING AGENT"]
-        E1["Header & Column Mapper"]
-        E2["Structured Data Sanitizer & Geo-Imputer"]
-        E3["Contract Rule & Hidden Cost Extractor"]
-    end
+> The MILP solver, the REI engine, and the RF calculator are the only sources of numeric truth. A language model may interpret requests, parse unstructured contracts/news, and explain results. It may never produce, adjust, or replace an optimization number.
 
-    subgraph FORECASTING["3. AI FORECASTING ENGINE"]
-        F1["Demand Pattern Characterizer (ADI vs CV²)"]
-        F2["Multi-Model Selector (Croston, LightGBM, ETS, Foundation)"]
-        F3["Surgical AI Signal Fuser (Search Trends & Shocks)"]
-        F4["Probabilistic Output (P10, P50, P90, Volatility σ_D)"]
-    end
+Three mechanisms enforce that rule in code:
 
-    subgraph SCENARIOS["4. SCENARIO PLANNER"]
-        S1["What-If Stress Testing (P10 vs P50 vs P90)"]
-        S2["Disruptions & Capacity Overrides"]
-    end
+| Mechanism | What it prevents |
+|---|---|
+| **Read-only evidence** | The reasoning agent receives already-computed results and has no write path back to the optimizer. |
+| **Numeric-claim grounding** | Every figure in generated narrative is adjudicated against authoritative solver values. Contradicted and unsupported numbers are **removed from the text**, not merely flagged. |
+| **Proposal validation** | Model-suggested facilities and scenarios are validated against canonical master data; a hallucinated site fails validation before the solver ever runs. |
 
-    subgraph OPTIMIZER["5. MILP OPTIMIZATION SOLVER"]
-        M1["Facility Location & Status (y_i ∈ {0,1})"]
-        M2["Multi-Commodity Flow (x_ijvk)"]
-        M3["Dynamic Safety Stock Holding (IC_ij)"]
-        M4["Exact Single-Pass HiGHS / CBC Solver"]
-    end
+A fourth principle runs through everything: **missing is not zero.** When exposure, probability, or risk cannot be computed, the system reports *why* it could not rather than substituting a default value, and missing evidence withholds automation — it can never grant it.
 
-    subgraph INTELLIGENCE["6. REASONING AGENT & DIGITAL TWIN"]
-        R1["Digital Twin (Baseline vs Optimized Comparison)"]
-        R2["Risk Exposure Index (REI) & Risk Factor (RF)"]
-        R3["Tier-Based Actioning (Automated vs Human-in-the-Loop)"]
-    end
+---
 
-    DATA --> EXTRACTION
-    EXTRACTION --> FORECASTING
-    EXTRACTION --> SCENARIOS
-    EXTRACTION --> OPTIMIZER
-    FORECASTING --> OPTIMIZER
-    FORECASTING --> SCENARIOS
-    SCENARIOS --> OPTIMIZER
-    OPTIMIZER --> INTELLIGENCE
+## 2. What Is Built
+
+| Capability | Status |
+|---|---|
+| **Deterministic MILP Core** (multi-echelon, capacitated, inventory-aware) | **Mature** — 100% cost reconciliation, benchmark-anchored |
+| **Data Ingestion & Sanitization Pipeline** (`netgravity.ingestion`) | **Complete** — Auto-column mapping, rate-card PDF parser, geo-imputation |
+| **AI Forecasting Engine** (`netgravity.forecasting`) | **Complete** — ADI vs $CV^2$ auto-characterization, Croston/SBA, LightGBM Quantile ($P_{10}/P_{50}/P_{90}$), AutoETS, TimesFM/Chronos adapter |
+| **Facility Resilience Assessment + Risk Exposure Index (REI)** | **Complete**, cached, and persisted |
+| **Risk Factor (RF) Calculation** from external event probability | **Complete**, with explicit refusal semantics ($RF = P + REI - P \cdot REI$) |
+| **Orchestrator Control Plane** (planning, dependencies, governance, audit) | **Complete** |
+| **Conversational Layer** (chatbot → NLU → orchestrator) | **Complete** |
+| **Interactive Web Cockpit & Digital Twin** | **Complete** demonstration build on Case-16 fixture |
+
+---
+
+## 3. System Architecture
+
+```
+                          ┌────────────────────────────────────────────────────────┐
+                          │               1. DATA SOURCES & INGESTION              │
+                          │   ERP / Excel, Rate Cards, Search & Disruption Signals │
+                          └──────────────────────────┬─────────────────────────────┘
+                                                     │
+                   ┌─────────────────────────────────┴─────────────────────────────────┐
+                   ▼                                                                   ▼
+┌─────────────────────────────────────┐                             ┌─────────────────────────────────────┐
+│     2. AI FORECASTING ENGINE        │                             │      3. ORCHESTRATOR CONTROL PLANE  │
+│ • ADI vs CV² Auto-Characterizer     │                             │ • Receives user intent / chat       │
+│ • Multi-Model: Croston, LightGBM,   │                             │ • Workflow Graph & Dependency State │
+│   AutoETS, Zero-Shot Foundation     │                             │ • Enforces Governance & Precedence  │
+│ • Low-Token External Signal Fuser   │                             └──────────────────┬──────────────────┘
+│ • Generates P10, P50, P90 & σ_D     │                                                │
+└──────────────────┬──────────────────┘                                                │
+                   │                                                                   │
+                   └─────────────────────────────────┬─────────────────────────────────┘
+                                                     ▼
+                          ┌────────────────────────────────────────────────────────┐
+                          │                  4. MILP SOLVER CORE                   │
+                          │          (Deterministic Source of Numeric Truth)       │
+                          │  • Facility Location (y_i ∈ {0,1})                     │
+                          │  • Multi-Commodity Flow Routing (x_ijvk)               │
+                          │  • Linear Precomputed Safety Stock Cost (IC_ij a_ij)   │
+                          │  • Single-Pass HiGHS / CBC Exact Solution              │
+                          └──────────────────────────┬─────────────────────────────┘
+                                                     │
+                   ┌─────────────────────────────────┴─────────────────────────────────┐
+                   ▼                                                                   ▼
+┌─────────────────────────────────────┐                             ┌─────────────────────────────────────┐
+│       5. RESILIENCE & RISK (REI/RF) │                             │      6. REASONING & DIGITAL TWIN    │
+│ • Disruption Simulation (PI / EI)   │                             │ • Digital Twin (Baseline vs Peak)   │
+│ • Risk Exposure Index (REI)         │                             │ • Numeric Claim Grounding Engine    │
+│ • RF = P + REI − (P × REI)          │                             │ • Tier-Based Actioning (Auto/HITL)  │
+└─────────────────────────────────────┘                             └─────────────────────────────────────┘
 ```
 
 ---
 
-## 2. AI Forecasting Engine (`netgravity.forecasting`)
+## 4. AI Forecasting Engine (`netgravity.forecasting`)
 
-The forecasting module bridges historical demand, contractual commitments, and external real-time web signals to feed multi-period, uncertainty-aware parameters ($\hat{D}_{jkt}, \sigma_{jkt}, P_{10}, P_{50}, P_{90}$) directly into the MILP solver and Scenario Planner.
+The forecasting module converts historical time-series, contractual terms, and external web signals into multi-period, uncertainty-aware parameters consumed by the MILP solver and Scenario Planner.
 
-### Key Architectural Pillars
+### Key Capabilities
 
-#### A. Industry-Agnostic Demand Characterization (ADI vs $CV^2$)
-Every SKU is automatically classified across the **Syntetos-Boylan demand matrix**:
-* **Smooth** ($ADI < 1.32, CV^2 < 0.49$): High predictability, continuous demand (FMCG, Food & Beverage).
-* **Intermittent** ($ADI \ge 1.32, CV^2 < 0.49$): Sporadic demand with constant sizing (Industrial components).
-* **Erratic** ($ADI < 1.32, CV^2 \ge 0.49$): Continuous demand with volatile sizing (Fast fashion, Consumer electronics).
-* **Lumpy** ($ADI \ge 1.32, CV^2 \ge 0.49$): Sporadic demand with extreme sizing variance (Aerospace MRO, heavy spare parts).
-* **Cold-Start** ($N < 8$ periods): Sparse or newly launched products (NPI).
+#### A. Demand Pattern Auto-Characterization (ADI vs $CV^2$)
+Every SKU time-series is classified across the standard **Syntetos-Boylan demand matrix**:
+* **Smooth** ($ADI < 1.32, CV^2 < 0.49$): High predictability, regular continuous demand.
+* **Intermittent** ($ADI \ge 1.32, CV^2 < 0.49$): Sporadic demand with constant sizing.
+* **Erratic** ($ADI < 1.32, CV^2 \ge 0.49$): Continuous demand with volatile sizing.
+* **Lumpy** ($ADI \ge 1.32, CV^2 \ge 0.49$): Sporadic demand with extreme sizing variance.
+* **Cold-Start** ($N < 8$ observations): Sparse or newly launched SKUs.
 
 #### B. Specialized Multi-Model Engines ($0 API Token Cost)
-* **Croston's Method & Syntetos-Boylan Approximation (SBA)**: Decouples demand size from arrival interval. Eliminates the severe over-forecasting and safety-stock inventory bloat created by standard ML on spare parts.
-* **LightGBM / Quantile Regressor**: Solves exact pinball loss via Linear Programming / Gradient Boosting for $P_{10}, P_{50}, P_{90}$ with lag features, rolling statistics, and cyclic seasonality.
+* **Croston's Method & Syntetos-Boylan (SBA)**: Decouples non-zero demand size from arrival interval, eliminating over-forecasting and inventory bloat on spare parts.
+* **LightGBM / Quantile Regressor**: Generates exact $P_{10}, P_{50}, P_{90}$ forecast bounds via Linear Programming (Highs Pinball Loss) with lag, trend, and cyclic seasonality features.
 * **Auto-ETS (Exponential Smoothing)**: Holt linear trend & Holt-Winters seasonal smoothing with automated parameter grid search and analytical prediction intervals.
-* **Pre-Trained Foundation Model Adapter**: Zero-shot inference for cold-start SKUs leveraging **Google TimesFM** and **Amazon Chronos** with Bayesian momentum fallback.
+* **Pre-Trained Foundation Model Adapter**: Zero-shot inference for cold-start SKUs leveraging **Google TimesFM** and **Amazon Chronos** with Bayesian prior fallback.
 * **Auto-Model Selector**: Dynamically routes each time-series to the mathematically optimal engine.
 
-#### C. Surgical Low-Token AI Signal Fuser
-* Parses external news, Google Search trends (e.g., *“Diwali promotion peak”*), weather alerts, and carrier strikes in a **single compact prompt** or deterministic semantic keyword fallback.
+#### C. Surgical Low-Token Signal Fuser
+* Extracts structured impact multipliers from external search trends, weather alerts, or carrier strikes in a **single compact prompt** or deterministic semantic keyword fallback.
 * Modulates baseline demand and volatility into bounded multipliers ($k_{\text{demand}} \in [0.5, 2.0]$, $k_\sigma \in [0.8, 3.0]$) at minimal API cost.
 
-#### D. Direct MILP & Scenario Bridge
+#### D. Direct MILP Bridge
 * Directly generates `DemandRecord` instances matching `CanonicalNetwork`.
 * Injects standard deviation $\sigma_D$ into `InventoryCoefficientEngine` to optimize safety stock holding costs ($IC_{ij} = z \cdot \sigma_D \cdot \sqrt{L_{ij}} \cdot h$).
 * Produces `p10_conservative`, `p50_expected`, and `p90_surge` network variants for robust optimization.
 
 ---
 
-## 3. How Festive / Seasonal Forecasting Works (e.g. Diwali)
+## 5. The Deterministic Core (MILP, REI & RF)
 
-NetGravity handles shifting seasonal spikes autonomously through a multi-tier flow:
+### MILP Objective Function
 
-1. **ERP Data Ingestion**: The **Extraction Agent** parses historical weekly/monthly orders.
-2. **Calendar Alignment**: Shifting lunisolar festival dates are synchronized via the regional holiday matrix.
-3. **Signal Calibration**: The **Signal Fuser** captures external search index surges and applies the exact surge multiplier (+35% volume, +40% volatility buffer).
-4. **MILP Optimization**:
-   - Pre-positions inventory at regional DCs before peak transit weeks.
-   - Evaluates whether to activate candidate 3PL temporary depots ($y_i = 1$).
-   - Rebalances multi-commodity corridor flows to satisfy SLA delivery constraints.
-5. **Cold-Start Adaptation**: If fewer than 3 years of data exist, NetGravity applies zero-shot Foundation Models and Category Curve Transfer without breaking.
+$$\min \sum_{i \in \mathcal{F}} f_i y_i + \sum_{(i,j) \in \mathcal{A}} \sum_{p \in \mathcal{P}} c_{ijp} x_{ijp} + \sum_{i \in \mathcal{F}, j \in \mathcal{M}} IC_{ij} a_{ij} + \sum_{i} \text{closure}_i (1 - y_i) + \lambda_{\text{carbon}} \sum_{(i,j)} e_{ij} x_{ij} + \text{Penalties}$$
+
+Subject to:
+1. **Demand Satisfaction**: $\sum_{i, v} x_{ijvp} + u_{jp} = D_{jp} \quad \forall j \in \mathcal{M}, p \in \mathcal{P}$
+2. **Facility Capacity Ceiling**: $\sum_{j, v, p} x_{ijvp} \le \text{Cap}_i y_i \quad \forall i \in \mathcal{F}$
+3. **Single-Pass Inventory Assignment**: $a_{ij} \le y_i$ and $\sum_{v, p} x_{ijvp} \le D_j a_{ij}$
+4. **Echelon Mass Balance**: Inbound Flow = Outbound Flow at each intermediate DC
+5. **SLA Delivery Thresholds**: Strict transit lead-time compliance by priority tier
+
+> **Solver objective ≠ business cost.** The shortage penalty (default `1e6`/unit) is a mathematical device that forces demand coverage, not a financial cost. Business Network Cost excludes it. Every REI figure is computed on reconciled *business* cost.
+
+### Validated Benchmarks
+- **Hand-Solvable 2-DC Reference Case**: Evaluates to **`$5,400.00`** (Optimal facility: `DC_T1`).
+- **Kearney Case 16 Full Network**: Evaluates to **`$115,638.14/month`** with 100% cost reconciliation.
+
+### Resilience Assessment: REI & RF
+
+* **Performance Impact**: $PI(k) = \text{Cost}(k) - \text{Cost}_0$
+* **Economic Impact**: $EI(k) = \max(0, PI(k))$
+* **Risk Exposure Index**: $REI(k) = \frac{EI(k)}{\max_j EI(j)}$
+* **Risk Factor (RF)**:
+  $$RF = P + REI - (P \times REI)$$
+
+`P = 0` is a measurement and computes normally ($RF = REI$). A missing $P$ is an absence and returns `NOT_COMPUTABLE` — severity is never substituted for probability.
 
 ---
 
-## 4. Repository Structure
+## 6. Conversational Layer & Governance
+
+```
+USER → CHATBOT → NLU → STRUCTURED INTENT → ORCHESTRATOR → workflow → engines
+                        ↑ the LLM stops here
+```
+
+The model's influence ends at an `Intent` enum value. It cannot name a workflow, a capability, or a step; `WorkflowPlanner` alone maps intent to graph.
+
+### Three Structural Enforcement Guarantees:
+1. `ConversationalIntent` has **no field** able to hold a cost, REI, RF, SLA, or governance outcome.
+2. Every entity ID comes from `CanonicalNetwork.facilities`; no code path produces an identifier from user text.
+3. Language modules are scanned for engine imports by automated tests to ensure no direct solver invocation.
+
+### Action Governance Precedence
+* **Structural actions (e.g. facility closure) are `HUMAN_ONLY` regardless of REI, RF, or cost.** Irreversibility governs, not exposure.
+* **Missing critical evidence withholds automation** (`R7B`). Absent risk information is never read as absence of risk.
+* **Failed numeric grounding withholds automation** (`R7C`): an explanation that cannot be verified cannot justify an action.
+
+---
+
+## 7. Repository Structure
 
 ```
 NetGravity/
-├── README.md                          # Master architectural overview & documentation
-├── requirements.txt                   # Production dependencies (PuLP, HiGHS, Flask, Pydantic, Scipy)
-├── pyproject.toml                     # Package configuration & test definitions
-├── smoke_test.py                      # 1-command verification suite (< 0.5s execution)
+├── README.md                          # Master architectural documentation
+├── requirements.txt                   # Production dependencies
+├── pyproject.toml                     # Package metadata & test config
+├── smoke_test.py                      # Fast verification suite (< 2s execution)
+├── run.py                             # Web application launcher
 │
-├── netgravity/                        # ⚡ Core Platform Engine
+├── app/                               # 🌐 Interactive Web Cockpit & Digital Twin
+│   ├── backend/app.py                 # Flask API & telemetry endpoints
+│   ├── frontend/                      # Decision cockpit, Leaflet map, Chart.js views
+│   └── standalone/                    # Portable zero-dependency single-file HTML build
+│
+├── docs/                              # 📚 Architecture & Mathematical Docs
+│   ├── mathematical_model.md          # Full MILP formulation
+│   ├── model_architecture.md          # Echelon architecture & pipeline
+│   ├── facility_resilience_rei.md     # REI & Risk Factor methodology
+│   └── *.md                           # Validation reports & phase audit trails
+│
+├── netgravity/                        # ⚡ Core Platform Package
 │   ├── forecasting/                   # 📈 Hybrid AI Forecasting Engine
 │   │   ├── agent.py                   # ForecastingAgent coordinator
-│   │   ├── schemas.py                 # TimeSeries, Pattern, ForecastResult schemas
-│   │   ├── characterizer.py           # Syntetos-Boylan ADI vs CV² matrix
-│   │   ├── engines/                   # Specialized numerical models
-│   │   │   ├── auto_selector.py       # Intelligent model router
-│   │   │   ├── intermittent.py        # Croston & Syntetos-Boylan (SBA)
-│   │   │   ├── quantile_regressor.py  # LightGBM & LP Pinball Quantiles (P10/50/90)
-│   │   │   ├── ets_smoother.py        # Holt-Winters & Auto-ETS
-│   │   │   └── foundation_adapter.py  # Google TimesFM / Amazon Chronos adapter
-│   │   ├── signals/                   # External search & contract fusers
-│   │   │   └── fuser.py               # Low-token LLM / semantic keyword fuser
-│   │   ├── bridge/                    # MILP Solver & Scenario translation
-│   │   │   └── milp_bridge.py         # DemandRecord & CanonicalNetwork bridge
-│   │   └── tests/                     # Automated forecasting test suite (15 tests)
+│   │   ├── schemas.py                 # TimeSeries & ForecastResult schemas
+│   │   ├── characterizer.py           # ADI vs CV² demand categorization
+│   │   ├── engines/                   # Croston, Quantile, ETS, Foundation models
+│   │   ├── signals/                   # Low-token external signal fusers
+│   │   ├── bridge/                    # MILP & Scenario network bridge
+│   │   └── tests/                     # Forecasting test suite (15 tests)
 │   │
 │   ├── ingestion/                     # 📥 Data Ingestion & Sanitization Pipeline
-│   │   ├── pipeline.py                # End-to-end ingestion runner
+│   │   ├── pipeline.py                # Ingestion runner
 │   │   ├── builder.py                 # CanonicalNetwork assembler
-│   │   ├── adapters/                  # Excel, CSV, PDF, Rate-Card parsers
-│   │   ├── ai/                        # Column mapper, contract reader, sanitizers
-│   │   ├── guardrails/                # External signal filtering & validation
-│   │   └── storage/                   # Versioned snapshot storage & caching
+│   │   ├── adapters/                  # Excel, CSV, PDF rate-card parsers
+│   │   ├── ai/                        # Column mapper & structured sanitizers
+│   │   └── guardrails/                # External signal policy enforcement
 │   │
 │   ├── optimization/                  # 📐 Mathematical Optimization Core (MILP)
 │   │   ├── milp.py                    # Direct V1.2 formulation & solve logic
-│   │   ├── solver.py                  # PuLP, HiGHS, and CBC solver interfaces
+│   │   ├── solver.py                  # PuLP, HiGHS, CBC solver interfaces
 │   │   └── baseline.py                # Baseline network cost evaluation
 │   │
-│   ├── inventory/                     # Safety stock, cycle stock & IC_ij coefficient engine
-│   ├── scenarios/                     # Scenario execution & parameter sweeps
-│   ├── resilience/                    # Disruption testing & AI Challenger engine
-│   ├── schemas/                       # Canonical Pydantic network & result models
-│   └── tests/                         # Complete test suite (289+ passing tests)
+│   ├── orchestrator/                  # ── Governed Control Plane ──
+│   │   ├── core/                      #    Planner, execution context, state
+│   │   ├── engines/                   #    Deterministic adapters, scenario builder
+│   │   ├── agents/                    #    Intent, reasoning, LLM gateway
+│   │   ├── risk/                      #    RF calculator & event assessment
+│   │   ├── validation/                #    Numeric grounding & claim checks
+│   │   └── governance/                #    Action classifier & approval policies
+│   │
+│   ├── inventory/                     # Safety stock, cycle stock & coefficient engine
+│   ├── resilience/                    # REI disruption engine, cache & persistence
+│   ├── scenarios/                     # Scenario execution & sweeps
+│   └── tests/                         # Master test suite
 │
-├── app/                               # 🌐 Interactive Web Cockpit & Digital Twin
-│   ├── backend/                       # Flask API server & endpoints
-│   ├── frontend/                      # Executive dashboard, Leaflet map, Chart.js views
-│   └── standalone/                    # Portable zero-dependency HTML build
-│
-└── docs/                              # 📚 Mathematical & Architectural Documentation
+└── scripts/build_standalone.py        # Automated single-file HTML compiler
 ```
 
 ---
 
-## 5. Usage Example
+## 8. Quickstart Guide
 
-### End-to-End Forecasting & MILP Optimization
+### Prerequisites
+- Python 3.10 or higher
+- Modern web browser (Chrome, Edge, Firefox, Safari)
 
-```python
-import pandas as pd
-from netgravity.forecasting import ForecastingAgent
-from netgravity.optimization.milp import milp_solve
-
-# 1. Initialize the Forecasting Agent
-agent = ForecastingAgent()
-
-# 2. Ingest raw historical orders from Extraction Agent
-df_history = pd.DataFrame([
-    {"market_id": "M_MUMBAI", "product_id": "SKU_A", "period": 1, "quantity": 1020},
-    {"market_id": "M_MUMBAI", "product_id": "SKU_A", "period": 2, "quantity": 1050},
-    {"market_id": "M_DELHI",  "product_id": "SKU_A", "period": 1, "quantity": 800},
-    # ...
-])
-
-# 3. Forecast multi-period horizon with external promotional signal
-forecasts = agent.forecast_from_dataframe(
-    df=df_history,
-    horizon=3,
-    external_signal_text="Diwali festival surge promotion expected across North and West zones",
-)
-
-# 4. Update the CanonicalNetwork and solve with MILP
-updated_network = agent.update_network_demands(baseline_network, forecasts, period_index=1)
-solution = milp_solve(updated_network)
-
-print(f"Solver Status: {solution.solver.status}")
-print(f"Optimal Network Cost: ${solution.solver.objective_value:,.2f}")
-```
-
----
-
-## 6. Verification & Test Suite
-
-NetGravity includes a comprehensive test suite across the MILP optimizer, ingestion pipeline, and forecasting engine.
-
+### Installation
 ```bash
-# Run complete test suite (304 passing tests)
+# 1. Clone repository
+git clone https://github.com/Rajat-star/NetGravity.git
+cd NetGravity
+
+# 2. Install dependencies
+pip install -r requirements.txt
+```
+
+### Running Tests
+```bash
+# Fast smoke verification (~2s)
+python smoke_test.py
+
+# Run complete automated test suite
 pytest
 
 # Run forecasting test suite specifically
 pytest netgravity/forecasting/tests -v
 ```
 
-```powershell
-============================= test session starts =============================
-netgravity/forecasting/tests/test_characterizer.py::test_smooth_demand PASSED
-netgravity/forecasting/tests/test_characterizer.py::test_intermittent_demand PASSED
-netgravity/forecasting/tests/test_characterizer.py::test_erratic_demand PASSED
-netgravity/forecasting/tests/test_characterizer.py::test_lumpy_demand PASSED
-netgravity/forecasting/tests/test_characterizer.py::test_cold_start_demand PASSED
-netgravity/forecasting/tests/test_engines.py::test_intermittent_sba PASSED
-netgravity/forecasting/tests/test_engines.py::test_ets_smoother_trend PASSED
-netgravity/forecasting/tests/test_engines.py::test_quantile_regressor PASSED
-netgravity/forecasting/tests/test_engines.py::test_foundation_cold_start PASSED
-netgravity/forecasting/tests/test_engines.py::test_auto_model_selector_routing PASSED
-netgravity/forecasting/tests/test_milp_integration.py::test_end_to_end_forecasting_to_milp PASSED
-netgravity/forecasting/tests/test_milp_integration.py::test_scenario_variation_generation PASSED
-netgravity/forecasting/tests/test_signal_fuser.py::test_signal_fuser_surge PASSED
-netgravity/forecasting/tests/test_signal_fuser.py::test_signal_fuser_disruption PASSED
-netgravity/forecasting/tests/test_signal_fuser.py::test_apply_signal_modifier PASSED
-============================ 304 passed in 15.2s ==============================
+### Running the Web Application
+```bash
+# Launch web application (recommended)
+python run.py
 ```
+Open [http://localhost:5050](http://localhost:5050) in your web browser.
+
+**Zero-Dependency Offline HTML Demo**: Open `app/standalone/netgravity_standalone.html` directly in any web browser without needing a Python or Node environment.
 
 ---
 
-## 7. Attribution & License
-Developed for the **Kearney Case Competition**. Proprietary decision-intelligence and mathematical network optimization platform.
+## 9. Attribution & License
+Developed for the **Kearney Case Competition** (Case 16 — Interactive Logistics Network Optimisation Agent). Proprietary decision-intelligence and mathematical optimization architecture.

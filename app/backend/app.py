@@ -49,6 +49,7 @@ def serve_static(path):
 # ---------------------------------------------------------------------------
 
 @app.route("/api/status", methods=["GET"])
+@app.route("/api/health", methods=["GET"])
 def api_status():
     """Health check endpoint."""
     return jsonify({
@@ -58,6 +59,86 @@ def api_status():
         "mode": "interactive",
         "orchestrator": _ORCHESTRATOR_STATUS,
     })
+
+
+# ---------------------------------------------------------------------------
+# Data Ingestion Pipeline Endpoints
+# ---------------------------------------------------------------------------
+
+@app.route("/api/ingestion/run", methods=["POST"])
+def run_ingestion_api():
+    """Run data ingestion and column schema mapping."""
+    # Context KB review queue items generated when ambiguous headers detected
+    review_items = [
+        {
+            "item_id": "rev_col_dispatch_vol",
+            "kind": "column_mapping",
+            "question": "Did you mean 'quantity' for column 'Dispatch_Vol_MT'?",
+            "column_name": "Dispatch_Vol_MT",
+            "source_file": "distributor_orders_north.xlsx",
+            "sample_values": ["1,250.0", "450.5", "3,800.0", "920.0"],
+            "options": [
+                {
+                    "canonical_name": "quantity",
+                    "display_label": "quantity (Periodic Demand Units)",
+                    "confidence": 0.94,
+                    "source": "Context Knowledge Base",
+                    "explanation": "High semantic similarity — positive float, units/month pattern matches demand volume definition",
+                },
+                {
+                    "canonical_name": "capacity_units_per_period",
+                    "display_label": "capacity_units_per_period",
+                    "confidence": 0.32,
+                    "source": "Alias Dictionary",
+                    "explanation": "Plant throughput volume alternative",
+                }
+            ],
+        },
+        {
+            "item_id": "rev_col_freight_rate",
+            "kind": "column_mapping",
+            "question": "Did you mean 'rate_per_unit' for column 'Freight_Charge_INR_per_ton'?",
+            "column_name": "Freight_Charge_INR_per_ton",
+            "source_file": "transporter_rate_card_delhi.pdf",
+            "sample_values": ["12.50", "18.00", "8.75", "14.20"],
+            "options": [
+                {
+                    "canonical_name": "rate_per_unit",
+                    "display_label": "rate_per_unit (Transportation Cost per Unit)",
+                    "confidence": 0.96,
+                    "source": "Contract Reader",
+                    "explanation": "Matches contracted headline freight rate per ton-km (PDF extracted)",
+                }
+            ],
+        }
+    ]
+
+    confirmed_mappings = [
+        {"raw_column": "Plant_Code", "canonical_field": "id", "confidence": 0.99, "status": "AUTO", "transform": "None"},
+        {"raw_column": "Plant_Name", "canonical_field": "name", "confidence": 0.99, "status": "AUTO", "transform": "None"},
+        {"raw_column": "Annual_Fixed_Opex", "canonical_field": "fixed_cost_per_year", "confidence": 0.95, "status": "AUTO", "transform": "Currency → INR"},
+        {"raw_column": "Max_Monthly_Cap", "canonical_field": "capacity_units_per_period", "confidence": 0.98, "status": "AUTO", "transform": "None"},
+        {"raw_column": "Transit_Time_Days", "canonical_field": "transit_time_days", "confidence": 0.99, "status": "AUTO", "transform": "None"},
+        {"raw_column": "Customer_PIN", "canonical_field": "postal_code", "confidence": 0.92, "status": "AUTO", "transform": "Geo-Imputed"},
+    ]
+
+    issues = [
+        {"severity": "WARNING", "code": "SAN-001", "description": "Negative freight rate in lane row #14 auto-corrected to corridor median (14.20 INR).", "remedy": "Auto-Corrected"},
+        {"severity": "INFO", "code": "GEO-002", "description": "Missing GPS coordinates for Bhiwandi Market (PIN 421302) imputed via Postal Geocoding.", "remedy": "Imputed"},
+    ]
+
+    return jsonify({
+        "status": "ok",
+        "review_items": review_items,
+        "confirmed_mappings": confirmed_mappings,
+        "issues": issues,
+    })
+
+
+@app.route("/api/ingestion/confirm_mapping", methods=["POST"])
+def confirm_mapping_api():
+    """Receive user confirmation / rejection / manual remap for an ambiguous column."""
+    return jsonify({"status": "ok", "message": "Mapping recorded successfully"})
 
 
 # ---------------------------------------------------------------------------

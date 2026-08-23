@@ -18,6 +18,7 @@ import { renderForecastChart,
 import { initScenarios } from './scenarios.js';
 import { initAgent } from './agent.js';
 import { initLandingPage } from './landing.js';
+import { initIngestionTopPanel } from './ingestion.js';
 
 // ─── State ──────────────────────────────────────────────────
 const state = {
@@ -42,6 +43,7 @@ function bootApp() {
   try { initLandingPage(); } catch (e) { console.error('initLandingPage error:', e); }
   try { initTabs(); } catch (e) { console.error('initTabs error:', e); }
   try { initHomeSelectors(); } catch (e) { console.error('initHomeSelectors error:', e); }
+  try { initIngestionTopPanel(); } catch (e) { console.error('initIngestionTopPanel error:', e); }
   try { renderHome(); } catch (e) { console.error('renderHome error:', e); }
   try { renderTwinTables(); } catch (e) { console.error('renderTwinTables error:', e); }
   try { initScenarios(); } catch (e) { console.error('initScenarios error:', e); }
@@ -56,6 +58,27 @@ if (document.readyState === 'loading') {
 
 // ─── Tab Routing & Sub-Navigation ───────────────────────────
 export function navigateToTab(tab) {
+  if (tab === 'ingestion') {
+    const subKpi = document.getElementById('nav-sub-kpi');
+    if (subKpi) {
+      subKpi.style.display = 'none';
+      subKpi.classList.remove('active');
+    }
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const ingNav = document.querySelector('.nav-item[data-tab="ingestion"]') || document.getElementById('nav-item-ingestion');
+    if (ingNav) {
+      ingNav.classList.add('active');
+    } else {
+      document.getElementById('nav-item-home')?.classList.add('active');
+    }
+
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-ingestion')?.classList.add('active');
+    state.activeTab = 'ingestion';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
+
   if (tab === 'facility-dashboard') {
     // Show sub-menu under Home in sidebar
     const subKpi = document.getElementById('nav-sub-kpi');
@@ -363,11 +386,28 @@ function populateFacilitySelector() {
 
 // ─── Render Full Home ───────────────────────────────────────
 function renderHome() {
+  renderHomeUserGreeting();
   renderHomeKPIs();
   renderHomeForecast();
   renderHomeDigitalTwin();
   renderHomeInsights();
   renderHomeActions();
+}
+
+function renderHomeUserGreeting() {
+  const userEl = document.getElementById('home-username');
+  if (!userEl) return;
+  try {
+    const raw = localStorage.getItem('ng_user');
+    if (raw) {
+      const user = JSON.parse(raw);
+      if (user?.name) {
+        userEl.textContent = user.name.split(' ')[0];
+        return;
+      }
+    }
+  } catch (_) {}
+  userEl.textContent = 'Aayush';
 }
 
 // ─── Facility Full Analytics Dashboard ──────────────────────

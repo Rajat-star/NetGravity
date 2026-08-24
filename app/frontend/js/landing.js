@@ -306,8 +306,9 @@ function handleNodeLeave() {
 /**
  * Navigate from landing page into main dashboard
  */
-export function enterApp(targetTab = 'home') {
+export function enterApp(targetTab = 'home', pushHistory = true) {
   const landing = document.getElementById('landing-page');
+  const authPage = document.getElementById('auth-page');
   const appShell = document.querySelector('.app-shell');
 
   if (landing) {
@@ -315,8 +316,21 @@ export function enterApp(targetTab = 'home') {
     landing.style.display = 'none';
   }
 
+  if (authPage) {
+    authPage.classList.add('hidden');
+    authPage.style.display = 'none';
+  }
+
   if (appShell) {
     appShell.style.display = 'flex';
+  }
+
+  if (pushHistory) {
+    try {
+      window.history.pushState({ view: 'app' }, '', '/app');
+    } catch (e) {
+      window.location.hash = '#app';
+    }
   }
 
   if (typeof window.navigateToTab === 'function') {
@@ -334,12 +348,32 @@ export function enterApp(targetTab = 'home') {
 /**
  * Return to landing page view
  */
-export function returnToLanding() {
+export function returnToLanding(pushHistory = true) {
   const landing = document.getElementById('landing-page');
+  const authPage = document.getElementById('auth-page');
+  const appShell = document.querySelector('.app-shell');
+
+  if (authPage) {
+    authPage.classList.add('hidden');
+    authPage.style.display = 'none';
+  }
+
+  if (appShell) {
+    appShell.style.display = 'none';
+  }
+
   if (landing) {
     landing.classList.remove('hidden');
     landing.style.display = 'flex';
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  if (pushHistory) {
+    try {
+      window.history.pushState({ view: 'landing' }, '', '/');
+    } catch (e) {
+      window.location.hash = '';
+    }
   }
 }
 
@@ -357,7 +391,11 @@ function bindLandingEvents() {
   if (btnGetStarted) {
     btnGetStarted.onclick = (e) => {
       e.preventDefault();
-      enterApp('home');
+      if (typeof window.navigateToAuth === 'function') {
+        window.navigateToAuth('signup');
+      } else {
+        enterApp('home');
+      }
     };
   }
 
@@ -365,7 +403,11 @@ function bindLandingEvents() {
   if (btnSignIn) {
     btnSignIn.onclick = (e) => {
       e.preventDefault();
-      enterApp('home');
+      if (typeof window.navigateToAuth === 'function') {
+        window.navigateToAuth('login');
+      } else {
+        enterApp('home');
+      }
     };
   }
 

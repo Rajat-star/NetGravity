@@ -12,6 +12,7 @@ FRONTEND_DIR = os.path.join(REPO_ROOT, "app", "frontend")
 
 html_path = os.path.join(FRONTEND_DIR, "index.html")
 landing_css_path = os.path.join(FRONTEND_DIR, "css", "landing.css")
+auth_css_path = os.path.join(FRONTEND_DIR, "css", "auth.css")
 style_css_path = os.path.join(FRONTEND_DIR, "css", "style.css")
 
 js_files = [
@@ -23,6 +24,7 @@ js_files = [
     "scenarios.js",
     "agent.js",
     "landing.js",
+    "auth.js",
     "ingestion.js",
     "app.js"
 ]
@@ -34,6 +36,11 @@ landing_css = ""
 if os.path.exists(landing_css_path):
     with open(landing_css_path, "r", encoding="utf-8") as f:
         landing_css = f.read()
+
+auth_css = ""
+if os.path.exists(auth_css_path):
+    with open(auth_css_path, "r", encoding="utf-8") as f:
+        auth_css = f.read()
 
 with open(style_css_path, "r", encoding="utf-8") as f:
     style_css = f.read()
@@ -59,6 +66,9 @@ for jf in js_files:
 # Replace CSS links with inlined style tags
 if '<link rel="stylesheet" href="css/landing.css">' in html:
     html = html.replace('<link rel="stylesheet" href="css/landing.css">', f"<style>\n{landing_css}\n</style>")
+
+if '<link rel="stylesheet" href="css/auth.css">' in html:
+    html = html.replace('<link rel="stylesheet" href="css/auth.css">', f"<style>\n{auth_css}\n</style>")
 
 css_tag = '<link rel="stylesheet" href="css/style.css">'
 html = html.replace(css_tag, f"<style>\n{style_css}\n</style>")

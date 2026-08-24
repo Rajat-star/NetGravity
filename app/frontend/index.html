@@ -21,6 +21,7 @@
 
   <!-- Design System -->
   <link rel="stylesheet" href="css/landing.css">
+  <link rel="stylesheet" href="css/auth.css">
   <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -60,10 +61,10 @@
         </p>
         <div class="landing-accent-bar"></div>
         <div class="landing-cta-group">
-          <button class="btn-landing-primary" id="landing-btn-get-started" onclick="window.enterApp ? window.enterApp('home') : (document.getElementById('landing-page').style.display='none')">
+          <button class="btn-landing-primary" id="landing-btn-get-started" onclick="window.navigateToAuth ? window.navigateToAuth('signup') : (window.enterApp && window.enterApp('home'))">
             Get Started <span class="btn-arrow">→</span>
           </button>
-          <button class="btn-landing-secondary" id="landing-btn-sign-in" onclick="window.enterApp ? window.enterApp('home') : (document.getElementById('landing-page').style.display='none')">
+          <button class="btn-landing-secondary" id="landing-btn-sign-in" onclick="window.navigateToAuth ? window.navigateToAuth('login') : (window.enterApp && window.enterApp('home'))">
             Sign In
           </button>
         </div>
@@ -856,6 +857,332 @@
     </main>
   </div>
 
+  <!-- =========================================== NETGRAVITY AUTHENTICATION PAGES -->
+  <div id="auth-page" class="hidden">
+    <div class="auth-layout">
+      
+      <!-- Left Column: Branding, Value Proposition & Feature Pillars -->
+      <div class="auth-left-column">
+        <a class="auth-brand auth-brand-link" href="/" title="Return to Netgravity Landing Page">
+          <svg class="auth-brand-logo" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 12V36L36 12V36" stroke="#9218EA" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="12" cy="12" r="4.5" fill="#ffffff" stroke="#9218EA" stroke-width="3"/>
+            <circle cx="12" cy="36" r="4.5" fill="#ffffff" stroke="#9218EA" stroke-width="3"/>
+            <circle cx="36" cy="12" r="4.5" fill="#ffffff" stroke="#9218EA" stroke-width="3"/>
+            <circle cx="36" cy="36" r="4.5" fill="#ffffff" stroke="#9218EA" stroke-width="3"/>
+          </svg>
+          <div class="auth-brand-info">
+            <span class="auth-brand-name">Netgravity</span>
+            <span class="auth-brand-kearney">by Kearney</span>
+          </div>
+        </a>
+
+        <h1 class="auth-headline">
+          AI Decision Intelligence<br>
+          for <span class="highlight-purple">Logistics Networks</span>
+        </h1>
+
+        <p class="auth-subtext">
+          AI-powered optimization and digital twins<br>
+          that turn complexity into confident decisions.
+        </p>
+
+        <div class="auth-accent-bar"></div>
+
+        <div class="auth-pillars-list">
+          <div class="auth-pillar-item">
+            <div class="auth-pillar-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+                <polyline points="16 7 22 7 22 13"></polyline>
+              </svg>
+            </div>
+            <div class="auth-pillar-content">
+              <div class="auth-pillar-title">Optimize.</div>
+              <div class="auth-pillar-desc">Make data-driven decisions with AI.</div>
+            </div>
+          </div>
+
+          <div class="auth-pillar-item">
+            <div class="auth-pillar-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <polyline points="9 12 11 14 15 10"></polyline>
+              </svg>
+            </div>
+            <div class="auth-pillar-content">
+              <div class="auth-pillar-title">Simulate.</div>
+              <div class="auth-pillar-desc">Digital twins to model real-world scenarios.</div>
+            </div>
+          </div>
+
+          <div class="auth-pillar-item">
+            <div class="auth-pillar-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <polyline points="1 20 1 14 7 14"></polyline>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+              </svg>
+            </div>
+            <div class="auth-pillar-content">
+              <div class="auth-pillar-title">Transform.</div>
+              <div class="auth-pillar-desc">Build resilient, future-ready logistics networks.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Form Cards Container -->
+      <div class="auth-right-column">
+
+        <!-- 1. SIGN IN CARD -->
+        <div class="auth-card" id="auth-login-card">
+          <div class="auth-card-header">
+            <h2 class="auth-card-title">Sign in</h2>
+            <p class="auth-card-subtitle">Welcome back! Please sign in to continue.</p>
+          </div>
+
+          <form class="auth-form" id="auth-login-form" novalidate>
+            <!-- Email Field -->
+            <div class="auth-form-group" id="login-email-group">
+              <label class="auth-label" for="login-email">Email</label>
+              <div class="auth-input-wrapper">
+                <span class="auth-input-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                  </svg>
+                </span>
+                <input type="email" id="login-email" class="auth-input" placeholder="Enter your email" autocomplete="email" required>
+              </div>
+              <span class="auth-field-error" id="login-email-error">Please enter a valid email</span>
+            </div>
+
+            <!-- Password Field -->
+            <div class="auth-form-group" id="login-password-group">
+              <label class="auth-label" for="login-password">Password</label>
+              <div class="auth-input-wrapper">
+                <span class="auth-input-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                </span>
+                <input type="password" id="login-password" class="auth-input has-toggle" placeholder="Enter your password" autocomplete="current-password" required>
+                <button type="button" class="auth-password-toggle" data-target="login-password" aria-label="Toggle password visibility" title="Show/Hide password">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </button>
+              </div>
+              <span class="auth-field-error" id="login-password-error">Please enter your password</span>
+            </div>
+
+            <!-- Forgot Password Link -->
+            <div class="auth-forgot-link-wrap">
+              <a href="#forgot-password" class="auth-forgot-link" id="auth-link-forgot-password">Forgot password?</a>
+            </div>
+
+            <!-- Login CTA Button -->
+            <button type="submit" class="btn-auth-primary" id="btn-login-submit">
+              <span class="auth-btn-spinner"></span>
+              <span class="auth-btn-label">Login</span>
+            </button>
+
+            <!-- Divider -->
+            <div class="auth-divider">
+              <span class="auth-divider-text">or</span>
+            </div>
+
+            <!-- Footer Link to Signup -->
+            <div class="auth-card-footer">
+              New to Netgravity? <a href="#signup" class="auth-switch-link" id="auth-link-to-signup">Create an account</a>
+            </div>
+          </form>
+        </div>
+
+        <!-- 2. CREATE ACCOUNT CARD -->
+        <div class="auth-card" id="auth-signup-card" style="display:none">
+          <div class="auth-card-header">
+            <h2 class="auth-card-title">Create an account</h2>
+            <p class="auth-card-subtitle">Join Netgravity to unlock the power of AI for logistics.</p>
+          </div>
+
+          <form class="auth-form" id="auth-signup-form" novalidate>
+            <!-- Full Name -->
+            <div class="auth-form-group" id="signup-name-group">
+              <label class="auth-label" for="signup-name">Full Name</label>
+              <div class="auth-input-wrapper">
+                <span class="auth-input-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                </span>
+                <input type="text" id="signup-name" class="auth-input" placeholder="Enter your full name" autocomplete="name" required>
+              </div>
+              <span class="auth-field-error" id="signup-name-error">Please enter your full name</span>
+            </div>
+
+            <!-- Work Email -->
+            <div class="auth-form-group" id="signup-email-group">
+              <label class="auth-label" for="signup-email">Work Email</label>
+              <div class="auth-input-wrapper">
+                <span class="auth-input-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                  </svg>
+                </span>
+                <input type="email" id="signup-email" class="auth-input" placeholder="Enter your work email" autocomplete="email" required>
+              </div>
+              <span class="auth-field-error" id="signup-email-error">Please enter a valid work email</span>
+            </div>
+
+            <!-- Password -->
+            <div class="auth-form-group" id="signup-password-group">
+              <label class="auth-label" for="signup-password">Password</label>
+              <div class="auth-input-wrapper">
+                <span class="auth-input-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                </span>
+                <input type="password" id="signup-password" class="auth-input has-toggle" placeholder="Create a password" autocomplete="new-password" required>
+                <button type="button" class="auth-password-toggle" data-target="signup-password" aria-label="Toggle password visibility">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </button>
+              </div>
+              <span class="auth-field-error" id="signup-password-error">Password must be at least 6 characters</span>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="auth-form-group" id="signup-confirm-password-group">
+              <label class="auth-label" for="signup-confirm-password">Confirm Password</label>
+              <div class="auth-input-wrapper">
+                <span class="auth-input-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                </span>
+                <input type="password" id="signup-confirm-password" class="auth-input has-toggle" placeholder="Confirm your password" autocomplete="new-password" required>
+                <button type="button" class="auth-password-toggle" data-target="signup-confirm-password" aria-label="Toggle confirm password visibility">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </button>
+              </div>
+              <span class="auth-field-error" id="signup-confirm-password-error">Passwords do not match</span>
+            </div>
+
+            <!-- Company -->
+            <div class="auth-form-group" id="signup-company-group">
+              <label class="auth-label" for="signup-company">Company</label>
+              <div class="auth-input-wrapper">
+                <span class="auth-input-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                    <path d="M9 22v-4h6v4"></path>
+                    <path d="M8 6h.01"></path>
+                    <path d="M16 6h.01"></path>
+                    <path d="M8 10h.01"></path>
+                    <path d="M16 10h.01"></path>
+                    <path d="M8 14h.01"></path>
+                    <path d="M16 14h.01"></path>
+                  </svg>
+                </span>
+                <input type="text" id="signup-company" class="auth-input" placeholder="Enter your company name" autocomplete="organization" required>
+              </div>
+              <span class="auth-field-error" id="signup-company-error">Please enter your company name</span>
+            </div>
+
+            <!-- Terms & Privacy Checkbox -->
+            <div class="auth-terms-group" id="signup-terms-group">
+              <div class="auth-checkbox-wrap">
+                <input type="checkbox" id="signup-terms" class="auth-checkbox" required>
+                <svg class="auth-checkbox-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <label for="signup-terms" class="auth-terms-label">
+                I agree to the <a href="javascript:void(0)">Terms of Service</a> and <a href="javascript:void(0)">Privacy Policy</a>
+              </label>
+            </div>
+            <span class="auth-field-error" id="signup-terms-error" style="margin-top:-10px">You must agree to the Terms of Service</span>
+
+            <!-- Create Account CTA Button -->
+            <button type="submit" class="btn-auth-primary" id="btn-signup-submit">
+              <span class="auth-btn-spinner"></span>
+              <span class="auth-btn-label">Create Account</span>
+            </button>
+
+            <!-- Divider -->
+            <div class="auth-divider">
+              <span class="auth-divider-text">or</span>
+            </div>
+
+            <!-- Footer Link to Login -->
+            <div class="auth-card-footer">
+              Already have an account? <a href="#login" class="auth-switch-link" id="auth-link-to-login">Sign in</a>
+            </div>
+          </form>
+        </div>
+
+        <!-- 3. FORGOT PASSWORD CARD -->
+        <div class="auth-card" id="auth-forgot-card" style="display:none">
+          <div class="auth-card-header">
+            <h2 class="auth-card-title">Reset password</h2>
+            <p class="auth-card-subtitle">Enter your work email address and we'll send you instructions to reset your password.</p>
+          </div>
+
+          <div class="auth-banner-alert alert-success" id="forgot-alert-success"></div>
+
+          <form class="auth-form" id="auth-forgot-form" novalidate>
+            <!-- Work Email Field -->
+            <div class="auth-form-group" id="forgot-email-group">
+              <label class="auth-label" for="forgot-email">Work Email</label>
+              <div class="auth-input-wrapper">
+                <span class="auth-input-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                  </svg>
+                </span>
+                <input type="email" id="forgot-email" class="auth-input" placeholder="Enter your work email" autocomplete="email" required>
+              </div>
+              <span class="auth-field-error" id="forgot-email-error">Please enter a valid work email</span>
+            </div>
+
+            <!-- Send Reset Link CTA Button -->
+            <button type="submit" class="btn-auth-primary" id="btn-forgot-submit">
+              <span class="auth-btn-spinner"></span>
+              <span class="auth-btn-label">Send Reset Link</span>
+            </button>
+
+            <!-- Divider -->
+            <div class="auth-divider">
+              <span class="auth-divider-text">or</span>
+            </div>
+
+            <!-- Footer Link back to Login -->
+            <div class="auth-card-footer">
+              Remember your password? <a href="#login" class="auth-switch-link" id="auth-link-forgot-to-login">Sign in</a>
+            </div>
+          </form>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
   <div class="loading-bar" id="loading-bar"></div>
 
   <div class="app-shell">
@@ -881,14 +1208,6 @@
           <!-- Sub-menu for KPI Dashboard (expands when active) -->
           <div class="nav-sub-item" id="nav-sub-kpi" data-tab="facility-dashboard" style="display:none">
             <span class="sub-nav-indicator">└─</span> KPI Dashboard
-          </div>
-          <div class="nav-item" data-tab="ingestion" id="nav-item-ingestion">
-            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="17 8 12 3 7 8" />
-              <line x1="12" y1="3" x2="12" y2="15" />
-            </svg>
-            <span>Data Ingestion</span>
           </div>
           <div class="nav-item" data-tab="twin">
             <svg class="nav-svg" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
@@ -1174,17 +1493,57 @@
               </div>
             </div>
 
-            <!-- Prominent Action Center -->
+            <!-- Action Hub: Relevant Next Steps for Decision Planners -->
             <div class="ing-hero-actions-center">
-              <button class="btn-hero-launch" id="btn-launch-digital-twin">
-                <span>Launch Digital Twin Visualization</span>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-              </button>
+              <div class="ing-next-actions-title">
+                <span>Select Next Action</span>
+              </div>
+              <div class="ing-next-actions-grid">
+                <!-- 1. Digital Twin -->
+                <button class="btn-next-workflow primary" id="btn-launch-digital-twin" title="Inspect 3D spatial network and flow lanes">
+                  <div class="workflow-icon-box twin-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="7" cy="7" r="2"/><circle cx="14" cy="7" r="2"/><circle cx="7" cy="14" r="2"/><circle cx="14" cy="14" r="2"/><path d="M9 7h3M7 9v3M14 9v3M9 14h3"/></svg>
+                  </div>
+                  <div class="workflow-text-box">
+                    <span class="workflow-name">Digital Twin</span>
+                    <span class="workflow-desc">Explore 3D Network</span>
+                  </div>
+                  <span class="workflow-arrow">→</span>
+                </button>
+
+                <!-- 2. Scenario Optimization -->
+                <button class="btn-next-workflow scenario" id="btn-launch-scenarios" title="Run MILP cost optimization and what-if simulations">
+                  <div class="workflow-icon-box scenario-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 4h5v5H4zM11 4h5v5h-5zM4 11h5v5H4zM11 13l2 2 4-4"/></svg>
+                  </div>
+                  <div class="workflow-text-box">
+                    <span class="workflow-name">Scenario Planning</span>
+                    <span class="workflow-desc">Run Cost Optimization</span>
+                  </div>
+                  <span class="workflow-arrow">→</span>
+                </button>
+
+                <!-- 3. Demand Forecasting -->
+                <button class="btn-next-workflow forecast" id="btn-launch-forecast" title="Generate machine learning forecasts for regional demand">
+                  <div class="workflow-icon-box forecast-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="3,15 7,9 11,12 17,4"/><polyline points="14,4 17,4 17,7"/></svg>
+                  </div>
+                  <div class="workflow-text-box">
+                    <span class="workflow-name">Forecasting</span>
+                    <span class="workflow-desc">Predict Demand Curves</span>
+                  </div>
+                  <span class="workflow-arrow">→</span>
+                </button>
+              </div>
+
+              <!-- Secondary Actions -->
               <div class="ing-hero-sub-actions">
                 <button class="btn btn-secondary btn-sm" id="btn-back-to-cockpit-next">
-                  <span>View Decision Cockpit</span>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+                  <span>Decision Cockpit</span>
                 </button>
                 <button class="btn btn-ghost btn-sm" id="ing-hero-export-btn">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                   <span>Export Schema</span>
                 </button>
               </div>

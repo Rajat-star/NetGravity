@@ -635,6 +635,640 @@
 </style>
   <style>
 /* ═══════════════════════════════════════════════════════════
+   Netgravity — Authentication Design System (Sign In & Sign Up)
+   Enterprise SaaS · Kearney Purple (#9218EA) · Clean Minimal
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  --auth-primary: #9218EA;
+  --auth-primary-hover: #7e12cb;
+  --auth-primary-active: #6b0ea9;
+  --auth-primary-light: #f5edfc;
+  --auth-primary-border: #e9d5ff;
+  --auth-primary-focus: rgba(146, 24, 234, 0.15);
+  
+  --auth-bg: #ffffff;
+  --auth-card-bg: #ffffff;
+  --auth-card-border: #e5e7eb;
+  --auth-card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+  
+  --auth-text-title: #111827;
+  --auth-text-body: #4b5563;
+  --auth-text-muted: #6b7280;
+  --auth-text-subtle: #9ca3af;
+  
+  --auth-input-bg: #ffffff;
+  --auth-input-border: #e5e7eb;
+  --auth-input-hover: #d1d5db;
+  --auth-input-icon: #9218EA;
+  
+  --auth-error: #ef4444;
+  --auth-error-bg: #fef2f2;
+  --auth-error-border: #fecaca;
+  
+  --auth-success: #10b981;
+  --auth-success-bg: #ecfdf5;
+  --auth-success-border: #a7f3d0;
+}
+
+/* ─── Main Container ──────────────────────────────────────── */
+#auth-page {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: var(--auth-bg);
+  display: flex;
+  flex-direction: column;
+  z-index: 10000;
+  overflow-x: hidden;
+  overflow-y: auto;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: var(--auth-text-title);
+  opacity: 1;
+  transition: opacity 0.25s ease;
+}
+
+#auth-page.hidden {
+  display: none !important;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ─── Two-Column Layout ───────────────────────────────────── */
+.auth-layout {
+  flex: 1;
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 40px 64px 48px;
+  display: grid;
+  grid-template-columns: 1fr 1.08fr;
+  align-items: center;
+  gap: 72px;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* ─── Left Value Proposition Column ───────────────────────── */
+.auth-left-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 520px;
+}
+
+.auth-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  margin-bottom: 56px;
+}
+
+.auth-brand-logo {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+
+.auth-brand-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.auth-brand-name {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--auth-text-title);
+}
+
+.auth-brand-kearney {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--auth-primary);
+  letter-spacing: -0.01em;
+  margin-top: 2px;
+}
+
+.auth-headline {
+  font-size: 38px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  color: var(--auth-text-title);
+  margin: 0 0 18px 0;
+}
+
+.auth-headline .highlight-purple {
+  color: var(--auth-primary);
+  display: inline;
+}
+
+.auth-subtext {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--auth-text-body);
+  margin: 0 0 20px 0;
+  max-width: 440px;
+}
+
+.auth-accent-bar {
+  width: 36px;
+  height: 3.5px;
+  background: var(--auth-primary);
+  border-radius: 2px;
+  margin-bottom: 38px;
+}
+
+/* 3 Feature Pillars (Optimize, Simulate, Transform) */
+.auth-pillars-list {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.auth-pillar-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.auth-pillar-icon-wrap {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #fdf8ff;
+  border: 1.5px solid #f3e8ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--auth-primary);
+  box-shadow: 0 2px 6px rgba(146, 24, 234, 0.06);
+}
+
+.auth-pillar-icon-wrap svg {
+  width: 20px;
+  height: 20px;
+}
+
+.auth-pillar-content {
+  display: flex;
+  flex-direction: column;
+  padding-top: 2px;
+}
+
+.auth-pillar-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--auth-text-title);
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.auth-pillar-desc {
+  font-size: 13.5px;
+  color: var(--auth-text-muted);
+  line-height: 1.4;
+  margin-top: 2px;
+}
+
+/* ─── Right Authentication Form Card ──────────────────────── */
+.auth-right-column {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 490px;
+  background: var(--auth-card-bg);
+  border: 1px solid var(--auth-card-border);
+  border-radius: 16px;
+  padding: 44px 44px 38px;
+  box-shadow: var(--auth-card-shadow);
+  box-sizing: border-box;
+  position: relative;
+  transition: all 0.25s ease;
+}
+
+.auth-card-header {
+  margin-bottom: 28px;
+}
+
+.auth-card-title {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--auth-text-title);
+  margin: 0 0 8px 0;
+  line-height: 1.2;
+}
+
+.auth-card-subtitle {
+  font-size: 14.5px;
+  font-weight: 400;
+  color: var(--auth-text-muted);
+  line-height: 1.45;
+  margin: 0;
+}
+
+/* ─── Form Controls & Input Groups ────────────────────────── */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.auth-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  position: relative;
+}
+
+.auth-label {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #374151;
+  letter-spacing: -0.01em;
+}
+
+.auth-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.auth-input-icon {
+  position: absolute;
+  left: 14px;
+  width: 18px;
+  height: 18px;
+  color: var(--auth-input-icon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 2;
+  transition: color 0.18s ease;
+}
+
+.auth-input-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.auth-input {
+  width: 100%;
+  height: 46px;
+  padding: 0 14px 0 42px;
+  background: var(--auth-input-bg);
+  border: 1px solid var(--auth-input-border);
+  border-radius: 9px;
+  font-size: 14.5px;
+  font-family: inherit;
+  color: var(--auth-text-title);
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.auth-input.has-toggle {
+  padding-right: 42px;
+}
+
+.auth-input::placeholder {
+  color: #9ca3af;
+  font-weight: 400;
+  font-size: 14px;
+}
+
+.auth-input:hover {
+  border-color: var(--auth-input-hover);
+}
+
+.auth-input:focus {
+  border-color: var(--auth-primary);
+  box-shadow: 0 0 0 3.5px var(--auth-primary-focus);
+}
+
+.auth-form-group.has-error .auth-input {
+  border-color: var(--auth-error) !important;
+  background: var(--auth-error-bg);
+}
+
+.auth-form-group.has-error .auth-input:focus {
+  box-shadow: 0 0 0 3.5px rgba(239, 68, 68, 0.15) !important;
+}
+
+.auth-field-error {
+  font-size: 12px;
+  color: var(--auth-error);
+  font-weight: 500;
+  margin-top: 2px;
+  display: none;
+}
+
+.auth-form-group.has-error .auth-field-error {
+  display: block;
+}
+
+/* Password Visibility Toggle */
+.auth-password-toggle {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: color 0.18s ease;
+  z-index: 2;
+}
+
+.auth-password-toggle:hover {
+  color: #4b5563;
+}
+
+.auth-password-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ─── Links & Options Row ─────────────────────────────────── */
+.auth-forgot-link-wrap {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -4px;
+  margin-bottom: 2px;
+}
+
+.auth-forgot-link {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--auth-primary);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.18s ease;
+}
+
+.auth-forgot-link:hover {
+  color: var(--auth-primary-hover);
+  text-decoration: underline;
+}
+
+/* ─── Terms & Privacy Checkbox ────────────────────────────── */
+.auth-terms-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.auth-checkbox-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 2px;
+}
+
+.auth-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 17px;
+  height: 17px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+  background: #ffffff;
+  transition: all 0.18s ease;
+  display: inline-block;
+  margin: 0;
+}
+
+.auth-checkbox:checked {
+  background: var(--auth-primary);
+  border-color: var(--auth-primary);
+}
+
+.auth-checkbox-icon {
+  position: absolute;
+  top: 4px;
+  left: 2px;
+  width: 13px;
+  height: 13px;
+  color: #ffffff;
+  pointer-events: none;
+  display: none;
+}
+
+.auth-checkbox:checked + .auth-checkbox-icon {
+  display: block;
+}
+
+.auth-terms-label {
+  font-size: 13px;
+  color: var(--auth-text-body);
+  line-height: 1.45;
+  cursor: pointer;
+  user-select: none;
+}
+
+.auth-terms-label a {
+  color: var(--auth-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-terms-label a:hover {
+  text-decoration: underline;
+}
+
+/* ─── Primary CTA Button ──────────────────────────────────── */
+.btn-auth-primary {
+  width: 100%;
+  height: 46px;
+  background: var(--auth-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: 9px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 6px;
+  box-shadow: 0 4px 14px rgba(146, 24, 234, 0.22);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-auth-primary:hover {
+  background: var(--auth-primary-hover);
+  box-shadow: 0 6px 18px rgba(146, 24, 234, 0.32);
+}
+
+.btn-auth-primary:active {
+  background: var(--auth-primary-active);
+  transform: translateY(0);
+}
+
+.btn-auth-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.auth-btn-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: auth-spin 0.7s linear infinite;
+  display: none;
+}
+
+.btn-auth-primary.is-loading .auth-btn-spinner {
+  display: inline-block;
+}
+
+@keyframes auth-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─── Divider ("or") ──────────────────────────────────────── */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  margin: 22px 0 18px;
+  color: #9ca3af;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #f0f1f3;
+}
+
+.auth-divider-text {
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 400;
+  color: #9ca3af;
+}
+
+/* ─── Card Footer Text & Switch Links ─────────────────────── */
+.auth-card-footer {
+  text-align: center;
+  font-size: 14px;
+  color: var(--auth-text-body);
+}
+
+.auth-switch-link {
+  color: var(--auth-primary);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  margin-left: 4px;
+  transition: color 0.18s ease;
+}
+
+.auth-switch-link:hover {
+  color: var(--auth-primary-hover);
+  text-decoration: underline;
+}
+
+/* ─── Banner Feedback / Notifications ─────────────────────── */
+.auth-banner-alert {
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  display: none;
+  margin-bottom: 18px;
+  line-height: 1.4;
+}
+
+.auth-banner-alert.alert-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--auth-error-bg);
+  border: 1px solid var(--auth-error-border);
+  color: #b91c1c;
+}
+
+.auth-banner-alert.alert-success {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--auth-success-bg);
+  border: 1px solid var(--auth-success-border);
+  color: #065f46;
+}
+
+/* ─── Responsive Media Queries ────────────────────────────── */
+@media (max-width: 1080px) {
+  .auth-layout {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding: 32px 32px 48px;
+    justify-items: center;
+  }
+  
+  .auth-left-column {
+    max-width: 490px;
+    text-align: center;
+    align-items: center;
+  }
+  
+  .auth-accent-bar {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .auth-pillars-list {
+    display: none; /* Keep mobile view clean and focused on auth */
+  }
+}
+
+@media (max-width: 600px) {
+  .auth-layout {
+    padding: 24px 20px 40px;
+  }
+  
+  .auth-card {
+    padding: 30px 22px 28px;
+    border-radius: 14px;
+  }
+  
+  .auth-headline {
+    font-size: 28px;
+  }
+}
+
+</style>
+  <style>
+/* ═══════════════════════════════════════════════════════════
    NetGravity — Design System
    Light theme · Kearney purple · Consulting-grade SaaS
    ═══════════════════════════════════════════════════════════ */
@@ -3551,46 +4185,141 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
   letter-spacing: 0.04em;
 }
 
-/* Action Button Center */
+/* Action Button Hub */
 .ing-hero-actions-center {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 10px;
-  min-width: 260px;
+  gap: 12px;
+  min-width: 320px;
 }
 
-.btn-hero-launch {
-  background: linear-gradient(135deg, var(--primary) 0%, #7b12c7 100%);
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: 800;
-  padding: 14px 24px;
-  border-radius: var(--r-full, 999px);
-  border: none;
-  display: inline-flex;
+.ing-next-actions-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-3);
+  margin-bottom: -2px;
+}
+
+.ing-next-actions-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.btn-next-workflow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: #ffffff;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.btn-next-workflow:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(146, 24, 234, 0.14);
+}
+
+.btn-next-workflow.primary {
+  border-color: var(--purple-300);
+  background: linear-gradient(135deg, #ffffff 0%, #faf5ff 100%);
+}
+
+.btn-next-workflow.primary:hover {
+  border-color: var(--primary);
+  background: #ffffff;
+}
+
+.btn-next-workflow.scenario:hover {
+  border-color: #f59e0b;
+}
+
+.btn-next-workflow.forecast:hover {
+  border-color: #3b82f6;
+}
+
+.workflow-icon-box {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  box-shadow: 0 6px 20px rgba(146, 24, 234, 0.35);
-  cursor: pointer;
-  transition: all var(--transition);
-  letter-spacing: -0.1px;
+  flex-shrink: 0;
 }
-.btn-hero-launch:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 28px rgba(146, 24, 234, 0.48);
-  background: linear-gradient(135deg, #7b12c7 0%, var(--primary) 100%);
+
+.twin-icon {
+  background: #f3e8ff;
+  color: var(--primary);
+}
+
+.scenario-icon {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.forecast-icon {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.workflow-text-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.workflow-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: -0.01em;
+}
+
+.workflow-desc {
+  font-size: 11px;
+  color: var(--text-3);
+  margin-top: 2px;
+}
+
+.workflow-arrow {
+  font-size: 14px;
+  color: var(--text-3);
+  transition: transform 0.2s ease, color 0.2s ease;
+  padding-right: 2px;
+}
+
+.btn-next-workflow:hover .workflow-arrow {
+  transform: translateX(3px);
+  color: var(--primary);
 }
 
 .ing-hero-sub-actions {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 8px;
+  padding-top: 2px;
 }
 
-@media (max-width: 900px) {
+.ing-hero-sub-actions .btn {
+  font-size: 11.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+}
+
+@media (max-width: 960px) {
   .ing-hero-action-card {
     grid-template-columns: 1fr;
     padding: 20px;
@@ -4282,10 +5011,10 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
         </p>
         <div class="landing-accent-bar"></div>
         <div class="landing-cta-group">
-          <button class="btn-landing-primary" id="landing-btn-get-started" onclick="window.enterApp ? window.enterApp('home') : (document.getElementById('landing-page').style.display='none')">
+          <button class="btn-landing-primary" id="landing-btn-get-started" onclick="window.navigateToAuth ? window.navigateToAuth('signup') : (window.enterApp && window.enterApp('home'))">
             Get Started <span class="btn-arrow">→</span>
           </button>
-          <button class="btn-landing-secondary" id="landing-btn-sign-in" onclick="window.enterApp ? window.enterApp('home') : (document.getElementById('landing-page').style.display='none')">
+          <button class="btn-landing-secondary" id="landing-btn-sign-in" onclick="window.navigateToAuth ? window.navigateToAuth('login') : (window.enterApp && window.enterApp('home'))">
             Sign In
           </button>
         </div>
@@ -5078,6 +5807,332 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
     </main>
   </div>
 
+  <!-- =========================================== NETGRAVITY AUTHENTICATION PAGES -->
+  <div id="auth-page" class="hidden">
+    <div class="auth-layout">
+      
+      <!-- Left Column: Branding, Value Proposition & Feature Pillars -->
+      <div class="auth-left-column">
+        <a class="auth-brand auth-brand-link" href="/" title="Return to Netgravity Landing Page">
+          <svg class="auth-brand-logo" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 12V36L36 12V36" stroke="#9218EA" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="12" cy="12" r="4.5" fill="#ffffff" stroke="#9218EA" stroke-width="3"/>
+            <circle cx="12" cy="36" r="4.5" fill="#ffffff" stroke="#9218EA" stroke-width="3"/>
+            <circle cx="36" cy="12" r="4.5" fill="#ffffff" stroke="#9218EA" stroke-width="3"/>
+            <circle cx="36" cy="36" r="4.5" fill="#ffffff" stroke="#9218EA" stroke-width="3"/>
+          </svg>
+          <div class="auth-brand-info">
+            <span class="auth-brand-name">Netgravity</span>
+            <span class="auth-brand-kearney">by Kearney</span>
+          </div>
+        </a>
+
+        <h1 class="auth-headline">
+          AI Decision Intelligence<br>
+          for <span class="highlight-purple">Logistics Networks</span>
+        </h1>
+
+        <p class="auth-subtext">
+          AI-powered optimization and digital twins<br>
+          that turn complexity into confident decisions.
+        </p>
+
+        <div class="auth-accent-bar"></div>
+
+        <div class="auth-pillars-list">
+          <div class="auth-pillar-item">
+            <div class="auth-pillar-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+                <polyline points="16 7 22 7 22 13"></polyline>
+              </svg>
+            </div>
+            <div class="auth-pillar-content">
+              <div class="auth-pillar-title">Optimize.</div>
+              <div class="auth-pillar-desc">Make data-driven decisions with AI.</div>
+            </div>
+          </div>
+
+          <div class="auth-pillar-item">
+            <div class="auth-pillar-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <polyline points="9 12 11 14 15 10"></polyline>
+              </svg>
+            </div>
+            <div class="auth-pillar-content">
+              <div class="auth-pillar-title">Simulate.</div>
+              <div class="auth-pillar-desc">Digital twins to model real-world scenarios.</div>
+            </div>
+          </div>
+
+          <div class="auth-pillar-item">
+            <div class="auth-pillar-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <polyline points="1 20 1 14 7 14"></polyline>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+              </svg>
+            </div>
+            <div class="auth-pillar-content">
+              <div class="auth-pillar-title">Transform.</div>
+              <div class="auth-pillar-desc">Build resilient, future-ready logistics networks.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Form Cards Container -->
+      <div class="auth-right-column">
+
+        <!-- 1. SIGN IN CARD -->
+        <div class="auth-card" id="auth-login-card">
+          <div class="auth-card-header">
+            <h2 class="auth-card-title">Sign in</h2>
+            <p class="auth-card-subtitle">Welcome back! Please sign in to continue.</p>
+          </div>
+
+          <form class="auth-form" id="auth-login-form" novalidate>
+            <!-- Email Field -->
+            <div class="auth-form-group" id="login-email-group">
+              <label class="auth-label" for="login-email">Email</label>
+              <div class="auth-input-wrapper">
+                <span class="auth-input-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                  </svg>
+                </span>
+                <input type="email" id="login-email" class="auth-input" placeholder="Enter your email" autocomplete="email" required>
+              </div>
+              <span class="auth-field-error" id="login-email-error">Please enter a valid email</span>
+            </div>
+
+            <!-- Password Field -->
+            <div class="auth-form-group" id="login-password-group">
+              <label class="auth-label" for="login-password">Password</label>
+              <div class="auth-input-wrapper">
+                <span class="auth-input-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                </span>
+                <input type="password" id="login-password" class="auth-input has-toggle" placeholder="Enter your password" autocomplete="current-password" required>
+                <button type="button" class="auth-password-toggle" data-target="login-password" aria-label="Toggle password visibility" title="Show/Hide password">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </button>
+              </div>
+              <span class="auth-field-error" id="login-password-error">Please enter your password</span>
+            </div>
+
+            <!-- Forgot Password Link -->
+            <div class="auth-forgot-link-wrap">
+              <a href="#forgot-password" class="auth-forgot-link" id="auth-link-forgot-password">Forgot password?</a>
+            </div>
+
+            <!-- Login CTA Button -->
+            <button type="submit" class="btn-auth-primary" id="btn-login-submit">
+              <span class="auth-btn-spinner"></span>
+              <span class="auth-btn-label">Login</span>
+            </button>
+
+            <!-- Divider -->
+            <div class="auth-divider">
+              <span class="auth-divider-text">or</span>
+            </div>
+
+            <!-- Footer Link to Signup -->
+            <div class="auth-card-footer">
+              New to Netgravity? <a href="#signup" class="auth-switch-link" id="auth-link-to-signup">Create an account</a>
+            </div>
+          </form>
+        </div>
+
+        <!-- 2. CREATE ACCOUNT CARD -->
+        <div class="auth-card" id="auth-signup-card" style="display:none">
+          <div class="auth-card-header">
+            <h2 class="auth-card-title">Create an account</h2>
+            <p class="auth-card-subtitle">Join Netgravity to unlock the power of AI for logistics.</p>
+          </div>
+
+          <form class="auth-form" id="auth-signup-form" novalidate>
+            <!-- Full Name -->
+            <div class="auth-form-group" id="signup-name-group">
+              <label class="auth-label" for="signup-name">Full Name</label>
+              <div class="auth-input-wrapper">
+                <span class="auth-input-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                </span>
+                <input type="text" id="signup-name" class="auth-input" placeholder="Enter your full name" autocomplete="name" required>
+              </div>
+              <span class="auth-field-error" id="signup-name-error">Please enter your full name</span>
+            </div>
+
+            <!-- Work Email -->
+            <div class="auth-form-group" id="signup-email-group">
+              <label class="auth-label" for="signup-email">Work Email</label>
+              <div class="auth-input-wrapper">
+                <span class="auth-input-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                  </svg>
+                </span>
+                <input type="email" id="signup-email" class="auth-input" placeholder="Enter your work email" autocomplete="email" required>
+              </div>
+              <span class="auth-field-error" id="signup-email-error">Please enter a valid work email</span>
+            </div>
+
+            <!-- Password -->
+            <div class="auth-form-group" id="signup-password-group">
+              <label class="auth-label" for="signup-password">Password</label>
+              <div class="auth-input-wrapper">
+                <span class="auth-input-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                </span>
+                <input type="password" id="signup-password" class="auth-input has-toggle" placeholder="Create a password" autocomplete="new-password" required>
+                <button type="button" class="auth-password-toggle" data-target="signup-password" aria-label="Toggle password visibility">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </button>
+              </div>
+              <span class="auth-field-error" id="signup-password-error">Password must be at least 6 characters</span>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="auth-form-group" id="signup-confirm-password-group">
+              <label class="auth-label" for="signup-confirm-password">Confirm Password</label>
+              <div class="auth-input-wrapper">
+                <span class="auth-input-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                </span>
+                <input type="password" id="signup-confirm-password" class="auth-input has-toggle" placeholder="Confirm your password" autocomplete="new-password" required>
+                <button type="button" class="auth-password-toggle" data-target="signup-confirm-password" aria-label="Toggle confirm password visibility">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </button>
+              </div>
+              <span class="auth-field-error" id="signup-confirm-password-error">Passwords do not match</span>
+            </div>
+
+            <!-- Company -->
+            <div class="auth-form-group" id="signup-company-group">
+              <label class="auth-label" for="signup-company">Company</label>
+              <div class="auth-input-wrapper">
+                <span class="auth-input-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                    <path d="M9 22v-4h6v4"></path>
+                    <path d="M8 6h.01"></path>
+                    <path d="M16 6h.01"></path>
+                    <path d="M8 10h.01"></path>
+                    <path d="M16 10h.01"></path>
+                    <path d="M8 14h.01"></path>
+                    <path d="M16 14h.01"></path>
+                  </svg>
+                </span>
+                <input type="text" id="signup-company" class="auth-input" placeholder="Enter your company name" autocomplete="organization" required>
+              </div>
+              <span class="auth-field-error" id="signup-company-error">Please enter your company name</span>
+            </div>
+
+            <!-- Terms & Privacy Checkbox -->
+            <div class="auth-terms-group" id="signup-terms-group">
+              <div class="auth-checkbox-wrap">
+                <input type="checkbox" id="signup-terms" class="auth-checkbox" required>
+                <svg class="auth-checkbox-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <label for="signup-terms" class="auth-terms-label">
+                I agree to the <a href="javascript:void(0)">Terms of Service</a> and <a href="javascript:void(0)">Privacy Policy</a>
+              </label>
+            </div>
+            <span class="auth-field-error" id="signup-terms-error" style="margin-top:-10px">You must agree to the Terms of Service</span>
+
+            <!-- Create Account CTA Button -->
+            <button type="submit" class="btn-auth-primary" id="btn-signup-submit">
+              <span class="auth-btn-spinner"></span>
+              <span class="auth-btn-label">Create Account</span>
+            </button>
+
+            <!-- Divider -->
+            <div class="auth-divider">
+              <span class="auth-divider-text">or</span>
+            </div>
+
+            <!-- Footer Link to Login -->
+            <div class="auth-card-footer">
+              Already have an account? <a href="#login" class="auth-switch-link" id="auth-link-to-login">Sign in</a>
+            </div>
+          </form>
+        </div>
+
+        <!-- 3. FORGOT PASSWORD CARD -->
+        <div class="auth-card" id="auth-forgot-card" style="display:none">
+          <div class="auth-card-header">
+            <h2 class="auth-card-title">Reset password</h2>
+            <p class="auth-card-subtitle">Enter your work email address and we'll send you instructions to reset your password.</p>
+          </div>
+
+          <div class="auth-banner-alert alert-success" id="forgot-alert-success"></div>
+
+          <form class="auth-form" id="auth-forgot-form" novalidate>
+            <!-- Work Email Field -->
+            <div class="auth-form-group" id="forgot-email-group">
+              <label class="auth-label" for="forgot-email">Work Email</label>
+              <div class="auth-input-wrapper">
+                <span class="auth-input-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                  </svg>
+                </span>
+                <input type="email" id="forgot-email" class="auth-input" placeholder="Enter your work email" autocomplete="email" required>
+              </div>
+              <span class="auth-field-error" id="forgot-email-error">Please enter a valid work email</span>
+            </div>
+
+            <!-- Send Reset Link CTA Button -->
+            <button type="submit" class="btn-auth-primary" id="btn-forgot-submit">
+              <span class="auth-btn-spinner"></span>
+              <span class="auth-btn-label">Send Reset Link</span>
+            </button>
+
+            <!-- Divider -->
+            <div class="auth-divider">
+              <span class="auth-divider-text">or</span>
+            </div>
+
+            <!-- Footer Link back to Login -->
+            <div class="auth-card-footer">
+              Remember your password? <a href="#login" class="auth-switch-link" id="auth-link-forgot-to-login">Sign in</a>
+            </div>
+          </form>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
   <div class="loading-bar" id="loading-bar"></div>
 
   <div class="app-shell">
@@ -5103,14 +6158,6 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
           <!-- Sub-menu for KPI Dashboard (expands when active) -->
           <div class="nav-sub-item" id="nav-sub-kpi" data-tab="facility-dashboard" style="display:none">
             <span class="sub-nav-indicator">└─</span> KPI Dashboard
-          </div>
-          <div class="nav-item" data-tab="ingestion" id="nav-item-ingestion">
-            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="17 8 12 3 7 8" />
-              <line x1="12" y1="3" x2="12" y2="15" />
-            </svg>
-            <span>Data Ingestion</span>
           </div>
           <div class="nav-item" data-tab="twin">
             <svg class="nav-svg" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
@@ -5396,17 +6443,57 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
               </div>
             </div>
 
-            <!-- Prominent Action Center -->
+            <!-- Action Hub: Relevant Next Steps for Decision Planners -->
             <div class="ing-hero-actions-center">
-              <button class="btn-hero-launch" id="btn-launch-digital-twin">
-                <span>Launch Digital Twin Visualization</span>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-              </button>
+              <div class="ing-next-actions-title">
+                <span>Select Next Action</span>
+              </div>
+              <div class="ing-next-actions-grid">
+                <!-- 1. Digital Twin -->
+                <button class="btn-next-workflow primary" id="btn-launch-digital-twin" title="Inspect 3D spatial network and flow lanes">
+                  <div class="workflow-icon-box twin-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="7" cy="7" r="2"/><circle cx="14" cy="7" r="2"/><circle cx="7" cy="14" r="2"/><circle cx="14" cy="14" r="2"/><path d="M9 7h3M7 9v3M14 9v3M9 14h3"/></svg>
+                  </div>
+                  <div class="workflow-text-box">
+                    <span class="workflow-name">Digital Twin</span>
+                    <span class="workflow-desc">Explore 3D Network</span>
+                  </div>
+                  <span class="workflow-arrow">→</span>
+                </button>
+
+                <!-- 2. Scenario Optimization -->
+                <button class="btn-next-workflow scenario" id="btn-launch-scenarios" title="Run MILP cost optimization and what-if simulations">
+                  <div class="workflow-icon-box scenario-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 4h5v5H4zM11 4h5v5h-5zM4 11h5v5H4zM11 13l2 2 4-4"/></svg>
+                  </div>
+                  <div class="workflow-text-box">
+                    <span class="workflow-name">Scenario Planning</span>
+                    <span class="workflow-desc">Run Cost Optimization</span>
+                  </div>
+                  <span class="workflow-arrow">→</span>
+                </button>
+
+                <!-- 3. Demand Forecasting -->
+                <button class="btn-next-workflow forecast" id="btn-launch-forecast" title="Generate machine learning forecasts for regional demand">
+                  <div class="workflow-icon-box forecast-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="3,15 7,9 11,12 17,4"/><polyline points="14,4 17,4 17,7"/></svg>
+                  </div>
+                  <div class="workflow-text-box">
+                    <span class="workflow-name">Forecasting</span>
+                    <span class="workflow-desc">Predict Demand Curves</span>
+                  </div>
+                  <span class="workflow-arrow">→</span>
+                </button>
+              </div>
+
+              <!-- Secondary Actions -->
               <div class="ing-hero-sub-actions">
                 <button class="btn btn-secondary btn-sm" id="btn-back-to-cockpit-next">
-                  <span>View Decision Cockpit</span>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+                  <span>Decision Cockpit</span>
                 </button>
                 <button class="btn btn-ghost btn-sm" id="ing-hero-export-btn">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                   <span>Export Schema</span>
                 </button>
               </div>
@@ -11553,8 +12640,9 @@ function handleNodeLeave() {
 /**
  * Navigate from landing page into main dashboard
  */
-function enterApp(targetTab = 'home') {
+function enterApp(targetTab = 'home', pushHistory = true) {
   const landing = document.getElementById('landing-page');
+  const authPage = document.getElementById('auth-page');
   const appShell = document.querySelector('.app-shell');
 
   if (landing) {
@@ -11562,8 +12650,21 @@ function enterApp(targetTab = 'home') {
     landing.style.display = 'none';
   }
 
+  if (authPage) {
+    authPage.classList.add('hidden');
+    authPage.style.display = 'none';
+  }
+
   if (appShell) {
     appShell.style.display = 'flex';
+  }
+
+  if (pushHistory) {
+    try {
+      window.history.pushState({ view: 'app' }, '', '/app');
+    } catch (e) {
+      window.location.hash = '#app';
+    }
   }
 
   if (typeof window.navigateToTab === 'function') {
@@ -11581,12 +12682,32 @@ function enterApp(targetTab = 'home') {
 /**
  * Return to landing page view
  */
-function returnToLanding() {
+function returnToLanding(pushHistory = true) {
   const landing = document.getElementById('landing-page');
+  const authPage = document.getElementById('auth-page');
+  const appShell = document.querySelector('.app-shell');
+
+  if (authPage) {
+    authPage.classList.add('hidden');
+    authPage.style.display = 'none';
+  }
+
+  if (appShell) {
+    appShell.style.display = 'none';
+  }
+
   if (landing) {
     landing.classList.remove('hidden');
     landing.style.display = 'flex';
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  if (pushHistory) {
+    try {
+      window.history.pushState({ view: 'landing' }, '', '/');
+    } catch (e) {
+      window.location.hash = '';
+    }
   }
 }
 
@@ -11604,7 +12725,11 @@ function bindLandingEvents() {
   if (btnGetStarted) {
     btnGetStarted.onclick = (e) => {
       e.preventDefault();
-      enterApp('home');
+      if (typeof window.navigateToAuth === 'function') {
+        window.navigateToAuth('signup');
+      } else {
+        enterApp('home');
+      }
     };
   }
 
@@ -11612,7 +12737,11 @@ function bindLandingEvents() {
   if (btnSignIn) {
     btnSignIn.onclick = (e) => {
       e.preventDefault();
-      enterApp('home');
+      if (typeof window.navigateToAuth === 'function') {
+        window.navigateToAuth('login');
+      } else {
+        enterApp('home');
+      }
     };
   }
 
@@ -11630,6 +12759,516 @@ function bindLandingEvents() {
     sidebarBrand.setAttribute('title', 'Return to Netgravity Landing Page');
     sidebarBrand.onclick = () => returnToLanding();
   }
+}
+
+
+/* ═════════ auth.js ═════════ */
+/**
+ * Netgravity — Authentication Controller (Sign In, Create Account, Reset Password)
+ * ==============================================================================
+ * Handles view switching, form validation, password visibility toggles,
+ * auth state transitions, and integration with the main dashboard.
+ */
+
+// Track current view state
+let currentAuthView = 'login'; // 'login' | 'signup' | 'forgot-password'
+
+/**
+ * Initialize Authentication Module
+ */
+function initAuth() {
+  bindAuthEvents();
+  bindPasswordToggles();
+  handleInitialUrl();
+  setupHistoryListener();
+}
+
+/**
+ * Handle initial URL on page load (support deep linking /login, /signup, /forgot-password)
+ */
+function handleInitialUrl() {
+  const path = window.location.pathname.toLowerCase();
+  const hash = window.location.hash.toLowerCase();
+
+  if (path.includes('/login') || hash === '#login') {
+    navigateToAuth('login', false);
+  } else if (path.includes('/signup') || hash === '#signup' || hash === '#register') {
+    navigateToAuth('signup', false);
+  } else if (path.includes('/forgot-password') || hash === '#forgot-password' || hash === '#reset') {
+    navigateToAuth('forgot-password', false);
+  } else if (path.includes('/app') || hash === '#app') {
+    if (typeof window.enterApp === 'function') {
+      window.enterApp('home');
+    }
+  }
+}
+
+/**
+ * Setup browser history popstate listener for back/forward navigation
+ */
+function setupHistoryListener() {
+  window.addEventListener('popstate', (e) => {
+    const state = e.state;
+    if (state && state.view) {
+      if (state.view === 'landing') {
+        returnToLanding(false);
+      } else if (state.view === 'app') {
+        if (typeof window.enterApp === 'function') {
+          window.enterApp('home', false);
+        }
+      } else {
+        navigateToAuth(state.view, false);
+      }
+    } else {
+      handleInitialUrl();
+    }
+  });
+}
+
+/**
+ * Navigate to one of the authentication views ('login' | 'signup' | 'forgot-password')
+ */
+function navigateToAuth(view = 'login', pushHistory = true) {
+  currentAuthView = view;
+
+  const landingPage = document.getElementById('landing-page');
+  const authPage = document.getElementById('auth-page');
+  const appShell = document.querySelector('.app-shell');
+
+  // Hide Landing and App Shell
+  if (landingPage) {
+    landingPage.classList.add('hidden');
+    landingPage.style.display = 'none';
+  }
+  if (appShell) {
+    appShell.style.display = 'none';
+  }
+
+  // Show Auth Container
+  if (authPage) {
+    authPage.classList.remove('hidden');
+    authPage.style.display = 'flex';
+  }
+
+  // Toggle specific form cards
+  const loginCard = document.getElementById('auth-login-card');
+  const signupCard = document.getElementById('auth-signup-card');
+  const forgotCard = document.getElementById('auth-forgot-card');
+
+  if (loginCard) loginCard.style.display = view === 'login' ? 'block' : 'none';
+  if (signupCard) signupCard.style.display = view === 'signup' ? 'block' : 'none';
+  if (forgotCard) forgotCard.style.display = view === 'forgot-password' ? 'block' : 'none';
+
+  // Clear previous errors
+  clearAuthErrors();
+
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'instant' });
+
+  // Update browser URL
+  if (pushHistory) {
+    const targetUrl = view === 'login' ? '/login' : view === 'signup' ? '/signup' : '/forgot-password';
+    try {
+      window.history.pushState({ view }, '', targetUrl);
+    } catch (e) {
+      window.location.hash = `#${view}`;
+    }
+  }
+}
+
+/**
+ * Return to the existing landing page
+ */
+function returnToLanding(pushHistory = true) {
+  const landingPage = document.getElementById('landing-page');
+  const authPage = document.getElementById('auth-page');
+  const appShell = document.querySelector('.app-shell');
+
+  if (authPage) {
+    authPage.classList.add('hidden');
+    authPage.style.display = 'none';
+  }
+  if (appShell) {
+    appShell.style.display = 'none';
+  }
+  if (landingPage) {
+    landingPage.classList.remove('hidden');
+    landingPage.style.display = 'flex';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  if (pushHistory) {
+    try {
+      window.history.pushState({ view: 'landing' }, '', '/');
+    } catch (e) {
+      window.location.hash = '';
+    }
+  }
+}
+
+/**
+ * Bind password visibility toggles (eye icons)
+ */
+function bindPasswordToggles() {
+  document.querySelectorAll('.auth-password-toggle').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const targetInputId = btn.getAttribute('data-target');
+      const input = document.getElementById(targetInputId);
+      if (!input) return;
+
+      const isPassword = input.type === 'password';
+      input.type = isPassword ? 'text' : 'password';
+
+      // Update eye icon SVG
+      btn.innerHTML = isPassword ? `
+        <!-- Eye Open (Visible) -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+          <circle cx="12" cy="12" r="3"></circle>
+        </svg>
+      ` : `
+        <!-- Eye with Slash (Hidden) -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+          <line x1="1" y1="1" x2="23" y2="23"></line>
+        </svg>
+      `;
+    });
+  });
+}
+
+/**
+ * Bind Auth Form Submissions and Navigation Links
+ */
+function bindAuthEvents() {
+  // Brand logo click -> return to landing
+  document.querySelectorAll('.auth-brand-link').forEach(brand => {
+    brand.addEventListener('click', (e) => {
+      e.preventDefault();
+      returnToLanding();
+    });
+  });
+
+  // Switch to Signup link
+  const linkToSignup = document.getElementById('auth-link-to-signup');
+  if (linkToSignup) {
+    linkToSignup.addEventListener('click', (e) => {
+      e.preventDefault();
+      navigateToAuth('signup');
+    });
+  }
+
+  // Switch to Login link from Signup
+  const linkToLogin = document.getElementById('auth-link-to-login');
+  if (linkToLogin) {
+    linkToLogin.addEventListener('click', (e) => {
+      e.preventDefault();
+      navigateToAuth('login');
+    });
+  }
+
+  // Forgot password link from Login
+  const linkToForgot = document.getElementById('auth-link-forgot-password');
+  if (linkToForgot) {
+    linkToForgot.addEventListener('click', (e) => {
+      e.preventDefault();
+      navigateToAuth('forgot-password');
+    });
+  }
+
+  // Back to login link from Forgot Password
+  const linkForgotToLogin = document.getElementById('auth-link-forgot-to-login');
+  if (linkForgotToLogin) {
+    linkForgotToLogin.addEventListener('click', (e) => {
+      e.preventDefault();
+      navigateToAuth('login');
+    });
+  }
+
+  // Login Form Submission
+  const loginForm = document.getElementById('auth-login-form');
+  if (loginForm) {
+    loginForm.addEventListener('submit', handleLoginSubmit);
+  }
+
+  // Signup Form Submission
+  const signupForm = document.getElementById('auth-signup-form');
+  if (signupForm) {
+    signupForm.addEventListener('submit', handleSignupSubmit);
+  }
+
+  // Forgot Password Form Submission
+  const forgotForm = document.getElementById('auth-forgot-form');
+  if (forgotForm) {
+    forgotForm.addEventListener('submit', handleForgotSubmit);
+  }
+}
+
+/**
+ * Email validation helper (standard regex)
+ */
+function isValidEmail(email) {
+  const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  return re.test(String(email).toLowerCase());
+}
+
+/**
+ * Set field error state
+ */
+function setFieldError(fieldId, errorMessage) {
+  const group = document.getElementById(`${fieldId}-group`);
+  const errorEl = document.getElementById(`${fieldId}-error`);
+  if (group) group.classList.add('has-error');
+  if (errorEl) errorEl.textContent = errorMessage;
+}
+
+/**
+ * Clear field error state
+ */
+function clearFieldError(fieldId) {
+  const group = document.getElementById(`${fieldId}-group`);
+  if (group) group.classList.remove('has-error');
+}
+
+/**
+ * Clear all auth error states and alert banners
+ */
+function clearAuthErrors() {
+  document.querySelectorAll('.auth-form-group').forEach(el => el.classList.remove('has-error'));
+  document.querySelectorAll('.auth-banner-alert').forEach(el => {
+    el.style.display = 'none';
+    el.textContent = '';
+  });
+}
+
+/**
+ * Handle Login Form Submit
+ */
+function handleLoginSubmit(e) {
+  e.preventDefault();
+  clearAuthErrors();
+
+  const emailInput = document.getElementById('login-email');
+  const passwordInput = document.getElementById('login-password');
+  const submitBtn = document.getElementById('btn-login-submit');
+
+  const email = emailInput ? emailInput.value.trim() : '';
+  const password = passwordInput ? passwordInput.value : '';
+
+  let hasError = false;
+
+  if (!email) {
+    setFieldError('login-email', 'Please enter your email');
+    hasError = true;
+  } else if (!isValidEmail(email)) {
+    setFieldError('login-email', 'Please enter a valid email address');
+    hasError = true;
+  }
+
+  if (!password) {
+    setFieldError('login-password', 'Please enter your password');
+    hasError = true;
+  }
+
+  if (hasError) return;
+
+  // Set loading state
+  if (submitBtn) {
+    submitBtn.classList.add('is-loading');
+    submitBtn.disabled = true;
+    const labelSpan = submitBtn.querySelector('.auth-btn-label');
+    if (labelSpan) labelSpan.textContent = 'Logging in...';
+  }
+
+  // Simulate authentication latency & login
+  setTimeout(() => {
+    if (submitBtn) {
+      submitBtn.classList.remove('is-loading');
+      submitBtn.disabled = false;
+      const labelSpan = submitBtn.querySelector('.auth-btn-label');
+      if (labelSpan) labelSpan.textContent = 'Login';
+    }
+
+    // Save session in localStorage
+    try {
+      localStorage.setItem('netgravity_user', JSON.stringify({
+        email: email,
+        name: email.split('@')[0],
+        company: 'Kearney Logistics',
+        loggedInAt: new Date().toISOString()
+      }));
+    } catch (e) {}
+
+    // Transition to main dashboard
+    const authPage = document.getElementById('auth-page');
+    if (authPage) {
+      authPage.classList.add('hidden');
+      authPage.style.display = 'none';
+    }
+
+    if (typeof window.enterApp === 'function') {
+      window.enterApp('home');
+    }
+  }, 450);
+}
+
+/**
+ * Handle Create Account Form Submit
+ */
+function handleSignupSubmit(e) {
+  e.preventDefault();
+  clearAuthErrors();
+
+  const nameInput = document.getElementById('signup-name');
+  const emailInput = document.getElementById('signup-email');
+  const passwordInput = document.getElementById('signup-password');
+  const confirmPasswordInput = document.getElementById('signup-confirm-password');
+  const companyInput = document.getElementById('signup-company');
+  const termsCheckbox = document.getElementById('signup-terms');
+  const submitBtn = document.getElementById('btn-signup-submit');
+
+  const name = nameInput ? nameInput.value.trim() : '';
+  const email = emailInput ? emailInput.value.trim() : '';
+  const password = passwordInput ? passwordInput.value : '';
+  const confirmPassword = confirmPasswordInput ? confirmPasswordInput.value : '';
+  const company = companyInput ? companyInput.value.trim() : '';
+  const termsChecked = termsCheckbox ? termsCheckbox.checked : false;
+
+  let hasError = false;
+
+  if (!name) {
+    setFieldError('signup-name', 'Please enter your full name');
+    hasError = true;
+  }
+
+  if (!email) {
+    setFieldError('signup-email', 'Please enter your work email');
+    hasError = true;
+  } else if (!isValidEmail(email)) {
+    setFieldError('signup-email', 'Please enter a valid work email address');
+    hasError = true;
+  }
+
+  if (!password) {
+    setFieldError('signup-password', 'Please create a password');
+    hasError = true;
+  } else if (password.length < 6) {
+    setFieldError('signup-password', 'Password must be at least 6 characters');
+    hasError = true;
+  }
+
+  if (!confirmPassword) {
+    setFieldError('signup-confirm-password', 'Please confirm your password');
+    hasError = true;
+  } else if (password !== confirmPassword) {
+    setFieldError('signup-confirm-password', 'Passwords do not match');
+    hasError = true;
+  }
+
+  if (!company) {
+    setFieldError('signup-company', 'Please enter your company name');
+    hasError = true;
+  }
+
+  if (!termsChecked) {
+    setFieldError('signup-terms', 'You must agree to the Terms of Service and Privacy Policy');
+    hasError = true;
+  }
+
+  if (hasError) return;
+
+  // Set loading state
+  if (submitBtn) {
+    submitBtn.classList.add('is-loading');
+    submitBtn.disabled = true;
+    const labelSpan = submitBtn.querySelector('.auth-btn-label');
+    if (labelSpan) labelSpan.textContent = 'Creating Account...';
+  }
+
+  // Simulate account creation
+  setTimeout(() => {
+    if (submitBtn) {
+      submitBtn.classList.remove('is-loading');
+      submitBtn.disabled = false;
+      const labelSpan = submitBtn.querySelector('.auth-btn-label');
+      if (labelSpan) labelSpan.textContent = 'Create Account';
+    }
+
+    // Save session in localStorage
+    try {
+      localStorage.setItem('netgravity_user', JSON.stringify({
+        email: email,
+        name: name,
+        company: company,
+        loggedInAt: new Date().toISOString()
+      }));
+    } catch (e) {}
+
+    // Transition to main dashboard
+    const authPage = document.getElementById('auth-page');
+    if (authPage) {
+      authPage.classList.add('hidden');
+      authPage.style.display = 'none';
+    }
+
+    if (typeof window.enterApp === 'function') {
+      window.enterApp('home');
+    }
+  }, 500);
+}
+
+/**
+ * Handle Forgot Password Submit
+ */
+function handleForgotSubmit(e) {
+  e.preventDefault();
+  clearAuthErrors();
+
+  const emailInput = document.getElementById('forgot-email');
+  const submitBtn = document.getElementById('btn-forgot-submit');
+  const alertSuccess = document.getElementById('forgot-alert-success');
+
+  const email = emailInput ? emailInput.value.trim() : '';
+
+  if (!email) {
+    setFieldError('forgot-email', 'Please enter your work email');
+    return;
+  } else if (!isValidEmail(email)) {
+    setFieldError('forgot-email', 'Please enter a valid work email address');
+    return;
+  }
+
+  // Set loading state
+  if (submitBtn) {
+    submitBtn.classList.add('is-loading');
+    submitBtn.disabled = true;
+    const labelSpan = submitBtn.querySelector('.auth-btn-label');
+    if (labelSpan) labelSpan.textContent = 'Sending Reset Link...';
+  }
+
+  setTimeout(() => {
+    if (submitBtn) {
+      submitBtn.classList.remove('is-loading');
+      submitBtn.disabled = false;
+      const labelSpan = submitBtn.querySelector('.auth-btn-label');
+      if (labelSpan) labelSpan.textContent = 'Send Reset Link';
+    }
+
+    if (alertSuccess) {
+      alertSuccess.style.display = 'flex';
+      alertSuccess.innerHTML = `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <span>Reset instructions sent to <strong>${email}</strong>. Please check your inbox.</span>
+      `;
+    }
+  }, 450);
+}
+
+// Expose globally on window for inline clicks
+if (typeof window !== 'undefined') {
+  window.navigateToAuth = navigateToAuth;
+  window.returnToLanding = returnToLanding;
 }
 
 
@@ -11703,6 +13342,12 @@ function initIngestionTopPanel() {
   // Next Step Action Buttons in Completion Banner
   document.getElementById("btn-launch-digital-twin")?.addEventListener("click", () => {
     navigateToTab("twin");
+  });
+  document.getElementById("btn-launch-scenarios")?.addEventListener("click", () => {
+    navigateToTab("scenarios");
+  });
+  document.getElementById("btn-launch-forecast")?.addEventListener("click", () => {
+    navigateToTab("forecast");
   });
   document.getElementById("btn-back-to-cockpit-next")?.addEventListener("click", () => {
     navigateToTab("home");
@@ -12294,6 +13939,7 @@ if (typeof window !== "undefined") {
 
 
 
+
 // ─── State ──────────────────────────────────────────────────
 const state = {
   activeTab: 'home',
@@ -12314,6 +13960,7 @@ if (typeof window !== 'undefined') {
 
 // ─── Boot ───────────────────────────────────────────────────
 function bootApp() {
+  try { initAuth(); } catch (e) { console.error('initAuth error:', e); }
   try { initLandingPage(); } catch (e) { console.error('initLandingPage error:', e); }
   try { initTabs(); } catch (e) { console.error('initTabs error:', e); }
   try { initHomeSelectors(); } catch (e) { console.error('initHomeSelectors error:', e); }
@@ -12322,6 +13969,16 @@ function bootApp() {
   try { renderTwinTables(); } catch (e) { console.error('renderTwinTables error:', e); }
   try { initScenarios(); } catch (e) { console.error('initScenarios error:', e); }
   try { initAgent(); } catch (e) { console.error('initAgent error:', e); }
+
+  // Check saved user session
+  try {
+    const savedUser = localStorage.getItem('netgravity_user');
+    if (savedUser) {
+      const u = JSON.parse(savedUser);
+      const nameEl = document.getElementById('home-username');
+      if (nameEl && u.name) nameEl.textContent = u.name;
+    }
+  } catch (e) {}
 }
 
 if (document.readyState === 'loading') {

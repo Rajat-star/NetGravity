@@ -29,12 +29,20 @@ FRONTEND_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__fi
 
 
 @app.route("/")
+@app.route("/login")
+@app.route("/signup")
+@app.route("/forgot-password")
+@app.route("/app")
 def serve_index():
     return send_from_directory(FRONTEND_DIR, "index.html", mimetype="text/html")
 
 
 @app.route("/<path:path>")
 def serve_static(path):
+    file_path = os.path.join(FRONTEND_DIR, path)
+    if not os.path.exists(file_path):
+        return send_from_directory(FRONTEND_DIR, "index.html", mimetype="text/html")
+
     # Resolve MIME type explicitly to prevent Windows registry text/plain issues on ES modules
     mimetype, _ = mimetypes.guess_type(path)
     if path.endswith(".js"):

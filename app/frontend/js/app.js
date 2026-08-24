@@ -19,6 +19,7 @@ import { initScenarios } from './scenarios.js';
 import { initAgent } from './agent.js';
 import { initLandingPage } from './landing.js';
 import { initIngestionTopPanel } from './ingestion.js';
+import { initAuth } from './auth.js';
 
 // ─── State ──────────────────────────────────────────────────
 const state = {
@@ -40,6 +41,7 @@ if (typeof window !== 'undefined') {
 
 // ─── Boot ───────────────────────────────────────────────────
 function bootApp() {
+  try { initAuth(); } catch (e) { console.error('initAuth error:', e); }
   try { initLandingPage(); } catch (e) { console.error('initLandingPage error:', e); }
   try { initTabs(); } catch (e) { console.error('initTabs error:', e); }
   try { initHomeSelectors(); } catch (e) { console.error('initHomeSelectors error:', e); }
@@ -48,6 +50,16 @@ function bootApp() {
   try { renderTwinTables(); } catch (e) { console.error('renderTwinTables error:', e); }
   try { initScenarios(); } catch (e) { console.error('initScenarios error:', e); }
   try { initAgent(); } catch (e) { console.error('initAgent error:', e); }
+
+  // Check saved user session
+  try {
+    const savedUser = localStorage.getItem('netgravity_user');
+    if (savedUser) {
+      const u = JSON.parse(savedUser);
+      const nameEl = document.getElementById('home-username');
+      if (nameEl && u.name) nameEl.textContent = u.name;
+    }
+  } catch (e) {}
 }
 
 if (document.readyState === 'loading') {

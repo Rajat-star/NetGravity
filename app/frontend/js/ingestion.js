@@ -68,6 +68,12 @@ export function initIngestionTopPanel() {
   document.getElementById("btn-launch-digital-twin")?.addEventListener("click", () => {
     navigateToTab("twin");
   });
+  document.getElementById("btn-launch-scenarios")?.addEventListener("click", () => {
+    navigateToTab("scenarios");
+  });
+  document.getElementById("btn-launch-forecast")?.addEventListener("click", () => {
+    navigateToTab("forecast");
+  });
   document.getElementById("btn-back-to-cockpit-next")?.addEventListener("click", () => {
     navigateToTab("home");
   });

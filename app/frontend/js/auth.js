@@ -100,13 +100,19 @@ export function navigateToAuth(view = 'login', pushHistory = true) {
   // Scroll to top
   window.scrollTo({ top: 0, behavior: 'instant' });
 
-  // Update browser URL
+  // Update browser URL (safe on file:// and http://)
   if (pushHistory) {
-    const targetUrl = view === 'login' ? '/login' : view === 'signup' ? '/signup' : '/forgot-password';
-    try {
-      window.history.pushState({ view }, '', targetUrl);
-    } catch (e) {
-      window.location.hash = `#${view}`;
+    if (window.location.protocol === 'file:') {
+      try {
+        window.location.hash = `#${view}`;
+      } catch (e) {}
+    } else {
+      const targetUrl = view === 'login' ? '/login' : view === 'signup' ? '/signup' : '/forgot-password';
+      try {
+        window.history.pushState({ view }, '', targetUrl);
+      } catch (e) {
+        window.location.hash = `#${view}`;
+      }
     }
   }
 }
@@ -133,10 +139,16 @@ export function returnToLanding(pushHistory = true) {
   }
 
   if (pushHistory) {
-    try {
-      window.history.pushState({ view: 'landing' }, '', '/');
-    } catch (e) {
-      window.location.hash = '';
+    if (window.location.protocol === 'file:') {
+      try {
+        window.location.hash = '';
+      } catch (e) {}
+    } else {
+      try {
+        window.history.pushState({ view: 'landing' }, '', '/');
+      } catch (e) {
+        window.location.hash = '';
+      }
     }
   }
 }

@@ -54,10 +54,12 @@ for jf in js_files:
             # Clean local module import statements (leave external library imports intact)
             code = re.sub(r'import\s+[\s\S]*?from\s+[\'"]\.\/[^\'"]+[\'"];?', '', code)
             
-            # Clean export statements
+            # Clean all forms of export statements
+            code = re.sub(r'\bexport\s+async\s+function\s+', 'async function ', code)
+            code = re.sub(r'\bexport\s+function\s+', 'function ', code)
             code = re.sub(r'\bexport\s+const\s+', 'const ', code)
             code = re.sub(r'\bexport\s+let\s+', 'let ', code)
-            code = re.sub(r'\bexport\s+function\s+', 'function ', code)
+            code = re.sub(r'\bexport\s+var\s+', 'var ', code)
             code = re.sub(r'\bexport\s+default\s+', '', code)
             code = re.sub(r'\bexport\s*\{[\s\S]*?\};?', '', code)
             
@@ -73,10 +75,10 @@ if '<link rel="stylesheet" href="css/auth.css">' in html:
 css_tag = '<link rel="stylesheet" href="css/style.css">'
 html = html.replace(css_tag, f"<style>\n{style_css}\n</style>")
 
-# Replace module script with bundled module script
+# Replace module script with bundled standard script for universal local file execution
 js_script_tag = '<script type="module" src="js/app.js"></script>'
 bundled_js = "\n\n".join(js_combined)
-html = html.replace(js_script_tag, f'<script type="module">\n{bundled_js}\n</script>')
+html = html.replace(js_script_tag, f'<script>\n{bundled_js}\n</script>')
 
 out_root = os.path.join(REPO_ROOT, "netgravity_standalone.html")
 out_frontend = os.path.join(FRONTEND_DIR, "netgravity_standalone.html")
